@@ -1,0 +1,9 @@
+
+{
+    "region" : "ap-southeast-1",
+    "profile" : "rdoseksuser",
+    "configuration" : "Release",
+    "image-tag"     : "rdosdisplayapi:1.0.6",
+    "docker-build-working-dir" : "",
+    "vstoolkit-deployment-mode" : "PushOnly"
+}
