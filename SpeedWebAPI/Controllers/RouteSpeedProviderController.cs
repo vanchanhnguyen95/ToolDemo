@@ -4,12 +4,17 @@ using SpeedWebAPI.Models;
 
 namespace SpeedWebAPI.Controllers
 {
+    /*
+        @GET("/api/v1/routespeedprovider/get?limit=100")
+        @POST("/api/v1/routespeedprovider/push")
+    */
+
     [ApiVersion("1")]
     [ApiController]
 	[Route("api/v{version:apiVersion}/[controller]")]
 	public class RouteSpeedProviderController : ControllerBase
 	{
-        //GET: https://localhost:44352/api/RouteSpeedProvider?limit=100
+        //GET: https://localhost:5001/api/RouteSpeedProvider?limit=100
         [HttpGet]
         [MapToApiVersion("1")]
         [Route("Get")]
@@ -29,7 +34,6 @@ namespace SpeedWebAPI.Controllers
         {
             return new SpeedLimit();
         }
-
 
         private List<SpeedLimit> GetSpeedProviders()
         {
