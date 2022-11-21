@@ -2,10 +2,12 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
+using SpeedWebAPI.Infrastructure;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace SpeedWebAPI
@@ -44,6 +46,23 @@ namespace SpeedWebAPI
 			});
 			services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
 			services.AddSwaggerGen(options => options.OperationFilter<SwaggerDefaultValues>());
+
+			//Enable CORS
+			services.AddCors(c =>
+			{
+				c.AddPolicy("AllowOrigin", options => options.AllowAnyOrigin().AllowAnyMethod()
+				 .AllowAnyHeader());
+			});
+
+			services.AddDbContext<ApplicationDbContext>(
+				x => x.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+
+			//services.AddDbContext<ApplicationDbContext>(opt =>
+			//	opt.UseInMemoryDatabase("ApplicationDb"));
+
+			#region local service
+
+			#endregion
 		}
 
 
@@ -64,6 +83,8 @@ namespace SpeedWebAPI
 					options.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json", description.GroupName.ToUpperInvariant());
 				}
 			});
+
+			app.UseCors(options => options.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 
 			if (env.IsDevelopment())
 			{

@@ -14,7 +14,12 @@ namespace SpeedWebAPI.Controllers
 	[Route("api/v{version:apiVersion}/[controller]")]
 	public class RouteSpeedProviderController : ControllerBase
 	{
-        //GET: https://localhost:5001/api/RouteSpeedProvider?limit=100
+
+        /// <summary>
+        /// Lấy danh sách các điểm cần để lấy tốc độ giới hạn
+        /// </summary>
+        /// <param name="limit">giới hạn điểm cần lấy</param>
+        /// <returns></returns>
         [HttpGet]
         [MapToApiVersion("1")]
         [Route("Get")]
@@ -27,6 +32,11 @@ namespace SpeedWebAPI.Controllers
             return GetSpeedProviders();
         }
 
+        /// <summary>
+        /// Cập nhật tốc độ giới hạn
+        /// </summary>
+        /// <param name="speedLimits"></param>
+        /// <returns></returns>
         [HttpPost]
         [MapToApiVersion("1")]
         [Route("Push")]
