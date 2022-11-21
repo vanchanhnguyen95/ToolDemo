@@ -9,7 +9,8 @@ namespace SwaggerService.Controllers
     public class RouteSpeedProviderController : ControllerBase
     {
         //GET: https://localhost:44352/api/RouteSpeedProvider?limit=100
-        [HttpGet(Name = "RouteSpeedProvider/Get")]
+        [HttpGet]
+        [Route("Get")]
         public List<SpeedLimit> Get(int? limit)
         {
             if (limit != null)
@@ -19,8 +20,9 @@ namespace SwaggerService.Controllers
             return GetSpeedProviders();
         }
 
-        [HttpPost(Name = "Push")]
-        public SpeedLimit Push([FromBody] SpeedLimit speedLimit)
+        [HttpPost]
+        [Route("Push")]
+        public SpeedLimit Push([FromBody] List<SpeedLimit> speedLimits)
         {
             return new SpeedLimit();
         }
