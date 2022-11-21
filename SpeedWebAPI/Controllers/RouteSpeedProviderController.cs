@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using SpeedWebAPI.Models;
+using SpeedWebAPI.Services;
+using System.Threading.Tasks;
 
 namespace SpeedWebAPI.Controllers
 {
@@ -14,6 +16,22 @@ namespace SpeedWebAPI.Controllers
 	[Route("api/v{version:apiVersion}/[controller]")]
 	public class RouteSpeedProviderController : ControllerBase
 	{
+
+        private readonly ISpeedLimitService _service;
+
+        public RouteSpeedProviderController(ISpeedLimitService service)
+        {
+            _service = service;
+        }
+
+        [HttpGet]
+        [MapToApiVersion("1")]
+        [Route("GetSpeedProviders")]
+        public async Task<IActionResult> GetSpeedProviders(int? limit)
+        {
+            var data = await _service.GetSpeedProviders(limit);
+            return Ok(data);
+        }
 
         /// <summary>
         /// Lấy danh sách các điểm cần để lấy tốc độ giới hạn

@@ -1,12 +1,13 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using SpeedWebAPI.Infrastructure;
+using System;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SpeedWebAPI.Models
 {
     [Table("SpeedLimit")]
-    public class SpeedLimit
+    public class SpeedLimit : DisAuditableEntity
     {
-        [Key]
         public int Id { get; set; }
         public double Lat { get; set; } = 0;
         public double Long { get; set; } = 0;

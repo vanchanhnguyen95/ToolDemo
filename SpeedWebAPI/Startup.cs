@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using SpeedWebAPI.Infrastructure;
+using SpeedWebAPI.Services;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace SpeedWebAPI
@@ -54,14 +55,13 @@ namespace SpeedWebAPI
 				 .AllowAnyHeader());
 			});
 
+			//services.AddDbContext<ApplicationDbContext>(opt =>
+			//	opt.UseInMemoryDatabase("ApplicationDb"));
 			services.AddDbContext<ApplicationDbContext>(
 				x => x.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
-			//services.AddDbContext<ApplicationDbContext>(opt =>
-			//	opt.UseInMemoryDatabase("ApplicationDb"));
-
-			#region local service
-
+			#region Dependency Injection
+			services.AddScoped<ISpeedLimitService, SpeedLimitService>();
 			#endregion
 		}
 
