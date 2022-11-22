@@ -11,5 +11,14 @@ namespace SpeedWebAPI.Infrastructure
         }
 
         public virtual DbSet<SpeedLimit> SpeedLimits { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<SpeedLimit>().HasKey(u => new
+            {
+                u.Lat,
+                u.Long
+            });
+        }
     }
 }

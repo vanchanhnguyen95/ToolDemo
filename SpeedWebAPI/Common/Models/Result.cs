@@ -70,7 +70,7 @@
         /// <summary>
         /// Mã lỗi (nếu có)
         /// </summary>
-        int? TotalRecord { get; set; }
+        //int? TotalRecord { get; set; }
     }
 
     public class Result<T> : IResult<T>
@@ -81,20 +81,31 @@
         //public string Error { get; set; }
         public string Message { get; set; }
 
-        public int? TotalRecord { get; set; }
-        public T DataTotal { get; set; }
-        public int? Code { get; set; }
+        //public int? TotalRecord { get; set; }
+        //public T DataTotal { get; set; }
+        //public int? Code { get; set; }
 
         public static Result<T> Success(T data, int totalRecord = 0, string message = "", T dataTotal = default)
         {
             return new Result<T>()
             {
-                Data = data,
                 Message = message,
-                TotalRecord = totalRecord,
-                DataTotal = dataTotal
+                Data = data,
+                //TotalRecord = totalRecord,
+                //DataTotal = dataTotal
             };
         }
+
+        //public static Result<T> Success(T data, int totalRecord = 0, string message = "", T dataTotal = default)
+        //{
+        //    return new Result<T>()
+        //    {
+        //        Data = data,
+        //        Message = message,
+        //        TotalRecord = totalRecord,
+        //        DataTotal = dataTotal
+        //    };
+        //}
 
         public static Result<T> Error(string message = "") => new Result<T>()
         {

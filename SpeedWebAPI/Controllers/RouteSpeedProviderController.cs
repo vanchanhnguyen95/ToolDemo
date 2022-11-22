@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using SpeedWebAPI.Models;
 using SpeedWebAPI.Services;
+using SpeedWebAPI.ViewModels;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace SpeedWebAPI.Controllers
@@ -24,87 +24,46 @@ namespace SpeedWebAPI.Controllers
             _service = service;
         }
 
+        /// <summary>
+        ///  Lấy danh sách các điểm cần để lấy tốc độ giới hạn
+        /// </summary>
+        /// <param name="limit">Giới hạn điểm cần lấy</param>
+        /// <returns></returns>
         [HttpGet]
         [MapToApiVersion("1")]
-        [Route("GetSpeedProviders")]
-        public async Task<IActionResult> GetSpeedProviders(int? limit)
+        [Route("Get")]
+        public async Task<IActionResult> Get(int? limit)
         {
             var data = await _service.GetSpeedProviders(limit);
             return Ok(data);
         }
 
         /// <summary>
-        /// Lấy danh sách các điểm cần để lấy tốc độ giới hạn
+        /// Cập nhật tốc độ giới hạn từ 1 danh sách các tọa độ
         /// </summary>
-        /// <param name="limit">giới hạn điểm cần lấy</param>
+        /// <param name="speedLimits">Danh sách các điểm cần cập nhật tốc độ</param>
         /// <returns></returns>
-        [HttpGet]
+        [HttpPost]
         [MapToApiVersion("1")]
-        [Route("Get")]
-        public List<SpeedLimit> Get(int? limit)
+        [Route("Push")]
+        public async Task<IActionResult> Push([FromBody] List<SpeedProviderVm> speedLimits)
         {
-            if (limit != null)
-            {
-                return GetSpeedProviders();
-            }
-            return GetSpeedProviders();
+            var data = await _service.UpdateListSpeedProvider(speedLimits);
+            return Ok(data);
         }
 
         /// <summary>
         /// Cập nhật tốc độ giới hạn
         /// </summary>
-        /// <param name="speedLimits"></param>
+        /// <param name="speedLimit">Đối tượng cần cập nhật tọa độ</param>
         /// <returns></returns>
         [HttpPost]
         [MapToApiVersion("1")]
-        [Route("Push")]
-        public SpeedLimit Push([FromBody] List<SpeedLimit> speedLimits)
+        [Route("Save")]
+        public async Task<IActionResult> Save([FromBody] SpeedProviderVm speedLimit)
         {
-            return new SpeedLimit();
+            var data = await _service.Save(speedLimit);
+            return Ok(data);
         }
-
-        private List<SpeedLimit> GetSpeedProviders()
-        {
-            return new List<SpeedLimit>()
-            {
-                new SpeedLimit()
-                {
-                    Id = 1,
-                    Long = 1,
-                    Lat = 1,
-                    MinSpeed = 0,
-                    MaxSpeed = 50,
-                    ProviderType = 1
-                },
-                new SpeedLimit()
-                {
-                    Id = 2,
-                    Long = 1,
-                    Lat = 1,
-                    MinSpeed = 0,
-                    MaxSpeed = 50,
-                    ProviderType = 1
-                },
-                new SpeedLimit()
-                {
-                    Id = 3,
-                    Long = 1,
-                    Lat = 1,
-                    MinSpeed = 0,
-                    MaxSpeed = 50,
-                    ProviderType = 1
-                },
-                new SpeedLimit()
-                {
-                    Id = 4,
-                    Long = 1,
-                    Lat = 1,
-                    MinSpeed = 0,
-                    MaxSpeed = 50,
-                    ProviderType = 1
-                },
-            };
-        }
-
     }
 }
