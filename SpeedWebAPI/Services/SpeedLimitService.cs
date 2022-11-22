@@ -14,8 +14,10 @@ namespace SpeedWebAPI.Services
     public interface ISpeedLimitService : IBaseService<SpeedLimit>
     {
         Task<object> GetSpeedProviders(int? limit);
-        Task<IResult<object>> UpdateListSpeedProvider(List<SpeedProviderVm> speedLimits);
-        Task<IResult<object>> Save(SpeedProviderVm speedLimit);
+        //Task<IResult<object>> UpdateListSpeedProvider(List<SpeedProviderVm> speedLimits);
+
+        Task<IResult<object>> UpdateSpeedLimitPush(SpeedLimitParams speedLimitParams);
+        Task<IResult<object>> Save(SpeedLimitPush speedLimit);
     }
 
     public class SpeedLimitService : BaseService<SpeedLimit, ApplicationDbContext>, ISpeedLimitService // : ISpeedLimitService
@@ -30,10 +32,10 @@ namespace SpeedWebAPI.Services
             { 
                 var query = (from s in Db.SpeedLimits where s.DeleteFlag == 0
                             select s).Select(x
-                            => new SpeedProviderGetVm()
+                            => new SpeedLimitPush()
                             {
                                 Lat = x.Lat,
-                                Long = x.Long,
+                                Lng = x.Lng,
                                 ProviderType = x.ProviderType
                             });
                 var re = await query.Take(limit??100).ToListAsync();
@@ -45,24 +47,7 @@ namespace SpeedWebAPI.Services
             }
         }
 
-        public async Task<IResult<object>> UpdateListSpeedProvider(List<SpeedProviderVm> speedLimits)
-        {
-            try
-            {
-                foreach (SpeedProviderVm speedLimit in speedLimits)
-                {
-                    await UpdateSpeedProvider(speedLimit);
-                }
-
-                return Result<object>.Success(speedLimits);
-            }
-            catch (Exception ex)
-            {
-                return Result<object>.Error(ex.ToString());
-            }
-        }
-
-        public async Task<IResult<object>> Save(SpeedProviderVm speedLimit)
+        public async Task<IResult<object>> Save(SpeedLimitPush speedLimit)
         {
             try
             {
@@ -76,10 +61,10 @@ namespace SpeedWebAPI.Services
             }
         }
 
-        private async Task<IResult<object>> UpdateSpeedProvider(SpeedProviderVm speedLimit)
+        private async Task<IResult<object>> UpdateSpeedProvider(SpeedLimitPush speedLimit)
         {
             var obj = await Db.SpeedLimits
-                .Where(x => x.Lat == speedLimit.Lat &&  x.Long == speedLimit.Long).AsNoTracking().FirstOrDefaultAsync();
+                .Where(x => x.Lat == speedLimit.Lat &&  x.Lng == speedLimit.Lng).AsNoTracking().FirstOrDefaultAsync();
             if (obj != null)
             {
                 obj.MinSpeed = speedLimit.MinSpeed;
@@ -89,14 +74,12 @@ namespace SpeedWebAPI.Services
                 obj.UpdatedBy = $"Upd numbers {obj.UpdateCount?.ToString()}";
 
                 Db.Entry(obj).State = EntityState.Modified;
-                //await Db.SaveChangesAsync();
-                //return Result<object>.Success(obj);
             }
             else
             {
                 obj = new SpeedLimit();
                 obj.Lat = speedLimit.Lat;
-                obj.Long = speedLimit.Long;
+                obj.Lng = speedLimit.Lng;
                 obj.ProviderType = 1;
                 obj.DeleteFlag = 0;
                 obj.CreatedDate = DateTime.Now;
@@ -108,6 +91,55 @@ namespace SpeedWebAPI.Services
             return Result<object>.Success(obj);
         }
 
+        private async Task<IResult<object>> UpdateSpeedLimitPush(SpeedLimitPush speedLimit)
+        {
+            var obj = await Db.SpeedLimits
+                .Where(x => x.Lat == speedLimit.Lat && x.Lng == speedLimit.Lng).AsNoTracking().FirstOrDefaultAsync();
+            if (obj != null)
+            {
+                obj.MinSpeed = speedLimit.MinSpeed;
+                obj.MaxSpeed = speedLimit.MaxSpeed;
+                obj.UpdateCount++;
+                obj.UpdatedDate = DateTime.Now;
+                obj.UpdatedBy = $"Upd numbers {obj.UpdateCount?.ToString()}";
+
+                Db.Entry(obj).State = EntityState.Modified;
+            }
+            else
+            {
+                obj = new SpeedLimit();
+                obj.Lat = speedLimit.Lat;
+                obj.Lng = speedLimit.Lng;
+                obj.ProviderType = 1;
+                obj.DeleteFlag = 0;
+                obj.CreatedDate = DateTime.Now;
+                obj.UpdateCount = 0;
+                Db.SpeedLimits.Add(obj);
+            }
+
+            await Db.SaveChangesAsync();
+            return Result<object>.Success(obj);
+        }
+        public async Task<IResult<object>> UpdateSpeedLimitPush(SpeedLimitParams speedLimitParams)
+        {
+            try
+            {
+                if(speedLimitParams.data.Any())
+                {
+                    foreach (SpeedLimitPush item in speedLimitParams.data)
+                    {
+                        await UpdateSpeedLimitPush(item);
+                    }
+
+                    return Result<object>.Success(speedLimitParams);
+                }
+                return Result<object>.Success(speedLimitParams);
+            }
+            catch (Exception ex)
+            {
+                return Result<object>.Error(ex.ToString());
+            }
+        }
     }
 
 }

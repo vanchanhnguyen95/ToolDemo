@@ -1,29 +1,26 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using SpeedWebAPI.Models;
-using System.IO;
+﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
+using SpeedWebAPI.Models;
+using SpeedWebAPI.Services;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace SpeedWebAPI.Controllers
 {
-    /*
-        @GET("/api/v1/routespeedprovider/get?limit=100")
-        @POST("/api/v1/routespeedprovider/push")
-    */
-
     [ApiVersion("1")]
     [ApiController]
 	[Route("api/v{version:apiVersion}/[controller]")]
 	public class FilePointController : ControllerBase
 	{
-        [System.Obsolete]
-        private IHostingEnvironment environment;
+
+        private readonly ISpeedUploadService _speedUploadService;
 
         [System.Obsolete]
-        public FilePointController(IHostingEnvironment _environment)
+        public FilePointController(IHostingEnvironment environment, ISpeedUploadService speedUploadService)
         {
-            environment = _environment;
+            _speedUploadService = speedUploadService;
         }
 
         // The HTTP post request. The Body size limit is disabled 
@@ -32,28 +29,11 @@ namespace SpeedWebAPI.Controllers
         [Route("UploadFilePoint")]
         public IActionResult UploadFilePoint(IFormFile file)
         {
-            //Create the Directory.
-            string pathFile = Path.Combine(environment.WebRootPath, "Uploads\\");
-            if (!Directory.Exists(pathFile))
-            {
-                Directory.CreateDirectory(pathFile);
-            }
-
-            //Fetch the File.
             IFormFile postedFile = Request.Form.Files[0];
 
-            //Fetch the File Name.
-            //string fileName = Request.Form["fileName"] +Path.GetExtension(postedFile.FileName);
-            string fileName = postedFile.FileName;
-
-            //Save the File.
-            using (FileStream stream = new FileStream(Path.Combine(pathFile, fileName), FileMode.Create))
-            {
-                postedFile.CopyTo(stream);
-            }
-
+            string linkfileUpload =  _speedUploadService.GetLinkFileUpLoad(postedFile);
             //Send OK Response to Client.
-            return Ok(fileName);
+            return Ok(linkfileUpload);
         }
 
         [HttpPost]
@@ -86,16 +66,16 @@ namespace SpeedWebAPI.Controllers
         /// <param name="arrString"></param>
         private static void WriteFile(string link, string[] arrString)
         {
-            System.IO.StreamWriter streamWriter;
+            StreamWriter streamWriter;
             if (System.IO.File.Exists(link))
             {
-                System.IO.File.SetAttributes(link, System.IO.FileAttributes.Normal);
-                streamWriter = new System.IO.StreamWriter(link);
+                System.IO.File.SetAttributes(link, FileAttributes.Normal);
+                streamWriter = new StreamWriter(link);
             }
             else
             {
-                streamWriter = new System.IO.StreamWriter(link);
-                System.IO.File.SetAttributes(link, System.IO.FileAttributes.Normal);
+                streamWriter = new StreamWriter(link);
+                System.IO.File.SetAttributes(link, FileAttributes.Normal);
             }
 
             for (int i = 0; i < arrString.Length - 1; i++)
@@ -105,9 +85,10 @@ namespace SpeedWebAPI.Controllers
 
             streamWriter.Write(arrString[arrString.Length - 1]);
             streamWriter.Close();
-            System.IO.File.SetAttributes(link, System.IO.FileAttributes.ReadOnly);
+            System.IO.File.SetAttributes(link, FileAttributes.ReadOnly);
 
         }
+
     }
 
 }

@@ -12,10 +12,12 @@ namespace SpeedWebAPI.Migrations
                 columns: table => new
                 {
                     Lat = table.Column<double>(type: "float", nullable: false),
-                    Long = table.Column<double>(type: "float", nullable: false),
+                    Lng = table.Column<double>(type: "float", nullable: false),
                     MinSpeed = table.Column<int>(type: "int", nullable: true),
                     MaxSpeed = table.Column<int>(type: "int", nullable: true),
                     ProviderType = table.Column<int>(type: "int", nullable: true),
+                    SegmentID = table.Column<long>(type: "bigint", nullable: true),
+                    Note = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     CreatedBy = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -25,7 +27,7 @@ namespace SpeedWebAPI.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_SpeedLimit", x => new { x.Lat, x.Long });
+                    table.PrimaryKey("PK_SpeedLimit", x => new { x.Lat, x.Lng });
                 });
         }
 

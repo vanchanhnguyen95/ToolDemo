@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SpeedWebAPI.Services;
 using SpeedWebAPI.ViewModels;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace SpeedWebAPI.Controllers
@@ -41,14 +40,14 @@ namespace SpeedWebAPI.Controllers
         /// <summary>
         /// Cập nhật tốc độ giới hạn từ 1 danh sách các tọa độ
         /// </summary>
-        /// <param name="speedLimits">Danh sách các điểm cần cập nhật tốc độ</param>
+        /// <param name="speedLimitParams">Danh sách các điểm cần cập nhật tốc độ</param>
         /// <returns></returns>
         [HttpPost]
         [MapToApiVersion("1")]
         [Route("Push")]
-        public async Task<IActionResult> Push([FromBody] List<SpeedProviderVm> speedLimits)
+        public async Task<IActionResult> Push([FromBody] SpeedLimitParams speedLimitParams)
         {
-            var data = await _service.UpdateListSpeedProvider(speedLimits);
+            var data = await _service.UpdateSpeedLimitPush(speedLimitParams);
             return Ok(data);
         }
 
@@ -60,7 +59,7 @@ namespace SpeedWebAPI.Controllers
         [HttpPost]
         [MapToApiVersion("1")]
         [Route("Save")]
-        public async Task<IActionResult> Save([FromBody] SpeedProviderVm speedLimit)
+        public async Task<IActionResult> Save([FromBody] SpeedLimitPush speedLimit)
         {
             var data = await _service.Save(speedLimit);
             return Ok(data);

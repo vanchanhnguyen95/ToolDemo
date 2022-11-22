@@ -62,6 +62,7 @@ namespace SpeedWebAPI
 
 			#region Dependency Injection
 			services.AddScoped<ISpeedLimitService, SpeedLimitService>();
+			services.AddScoped<ISpeedUploadService, SpeedUploadService>();
 			#endregion
 		}
 

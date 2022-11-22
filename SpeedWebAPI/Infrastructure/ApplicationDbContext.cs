@@ -17,7 +17,7 @@ namespace SpeedWebAPI.Infrastructure
             modelBuilder.Entity<SpeedLimit>().HasKey(u => new
             {
                 u.Lat,
-                u.Long
+                u.Lng
             });
         }
     }
