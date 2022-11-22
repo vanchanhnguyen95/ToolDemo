@@ -5,22 +5,17 @@ using System.Threading.Tasks;
 
 namespace SpeedWebAPI.Controllers
 {
-    /*
-        @GET("/api/v1/routespeedprovider/get?limit=100")
-        @POST("/api/v1/routespeedprovider/push")
-    */
-
     [ApiVersion("1")]
     [ApiController]
 	[Route("api/v{version:apiVersion}/[controller]")]
 	public class RouteSpeedProviderController : ControllerBase
 	{
 
-        private readonly ISpeedLimitService _service;
+        private readonly ISpeedLimitService _speedLimitService;
 
-        public RouteSpeedProviderController(ISpeedLimitService service)
+        public RouteSpeedProviderController(ISpeedLimitService speedLimitService)
         {
-            _service = service;
+            _speedLimitService = speedLimitService;
         }
 
         /// <summary>
@@ -33,7 +28,7 @@ namespace SpeedWebAPI.Controllers
         [Route("Get")]
         public async Task<IActionResult> Get(int? limit)
         {
-            var data = await _service.GetSpeedProviders(limit);
+            var data = await _speedLimitService.GetSpeedProviders(limit);
             return Ok(data);
         }
 
@@ -47,7 +42,7 @@ namespace SpeedWebAPI.Controllers
         [Route("Push")]
         public async Task<IActionResult> Push([FromBody] SpeedLimitParams speedLimitParams)
         {
-            var data = await _service.UpdateSpeedLimitPush(speedLimitParams);
+            var data = await _speedLimitService.UpdateSpeedLimitPush(speedLimitParams);
             return Ok(data);
         }
 
@@ -61,7 +56,7 @@ namespace SpeedWebAPI.Controllers
         [Route("Save")]
         public async Task<IActionResult> Save([FromBody] SpeedLimitPush speedLimit)
         {
-            var data = await _service.Save(speedLimit);
+            var data = await _speedLimitService.Save(speedLimit);
             return Ok(data);
         }
     }

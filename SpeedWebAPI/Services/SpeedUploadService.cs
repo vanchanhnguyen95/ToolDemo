@@ -14,11 +14,17 @@ using System.Threading.Tasks;
 
 namespace SpeedWebAPI.Services
 {
+    #region interface
     public interface ISpeedUploadService : IBaseService<SpeedLimit>
     {
-        string GetLinkFileUpLoad(IFormFile postedFile);
+        /// <summary>
+        /// Update List Speed Provider
+        /// </summary>
+        /// <param name="postedFile"></param>
+        /// <returns></returns>
         Task<IResult<object>> UpdateListSpeedProvider(IFormFile postedFile);
     }
+    #endregion
 
     public class SpeedUploadService : BaseService<SpeedLimit, ApplicationDbContext>, ISpeedUploadService
     {
@@ -33,7 +39,27 @@ namespace SpeedWebAPI.Services
             _environment = environment;
         }
 
-        public string GetLinkFileUpLoad(IFormFile postedFile)
+        public async Task<IResult<object>> UpdateListSpeedProvider(IFormFile postedFile)
+        {
+            try
+            {
+                string linkTextFile = GetLinkFileUpLoad(postedFile);
+                List<SpeedProviderUpLoadVm> listSpeed = GetSpeedProviderFromUpload(linkTextFile);
+                await _speedLimitService.UpdloadSpeedProvider(listSpeed);
+
+                return Result<object>.Success(listSpeed);
+            }
+            catch (Exception ex)
+            {
+                return Result<object>.Error(ex.ToString());
+            }
+           
+            throw new NotImplementedException();
+        }
+
+        #region private method
+
+        private string GetLinkFileUpLoad(IFormFile postedFile)
         {
             try
             {
@@ -66,12 +92,6 @@ namespace SpeedWebAPI.Services
 
         }
 
-        public Task<IResult<object>> UpdateListSpeedProvider(IFormFile postedFile)
-        {
-            string linkTextFile = string.Empty;
-            throw new NotImplementedException();
-        }
-
         private List<SpeedProviderUpLoadVm> GetSpeedProviderFromUpload(string linkTextFile)
         {
             if (File.Exists(linkTextFile))
@@ -95,7 +115,7 @@ namespace SpeedWebAPI.Services
                         lineAdd.SegmentID = Convert.ToInt64((linesUpload[(int)DataSpeedUpLoad.ColSegmentID]).ToString());
                         lineAdd.Lat = Convert.ToDouble((linesUpload[(int)DataSpeedUpLoad.ColLat]).ToString());
                         lineAdd.Lng = Convert.ToDouble((linesUpload[(int)DataSpeedUpLoad.ColLng]).ToString());
-                        lineAdd.Note = (linesUpload[(int)DataSpeedUpLoad.ColNote]).ToString();
+                        //lineAdd.Note = (linesUpload[(int)DataSpeedUpLoad.ColNote]).ToString();
                         listUpload.Add(lineAdd);
                     }
                     file.Close();
@@ -105,5 +125,7 @@ namespace SpeedWebAPI.Services
             }
             return new List<SpeedProviderUpLoadVm>();
         }
+
+        #endregion
     }
 }
