@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using SpeedWebAPI.Common.Constants;
 using SpeedWebAPI.Common.Models;
 using SpeedWebAPI.Infrastructure;
 using SpeedWebAPI.Models;
@@ -36,7 +37,7 @@ namespace SpeedWebAPI.Services
         Task<IResult<object>> UpdloadSpeedProvider(List<SpeedProviderUpLoadVm> speedProviderUpLoad);
 
         /// <summary>
-        /// Tạo dữ liệu SơeedLimit
+        /// Tạo dữ liệu SpeedLimit
         /// </summary>
         /// <param name="speedLimit"></param>
         /// <returns></returns>
@@ -54,7 +55,10 @@ namespace SpeedWebAPI.Services
         public async Task<object> GetSpeedProviders(int? limit)
         {
             try
-            { 
+            {
+                if (limit == null || limit > 100)
+                    limit = 100;
+
                 var query = (from s in Db.SpeedLimits where s.DeleteFlag == 0
                             select s).OrderBy(x => x.MaxSpeed).Select(x
                             => new SpeedProvider()
@@ -64,7 +68,7 @@ namespace SpeedWebAPI.Services
                                 ProviderType = x.ProviderType
                             });
                 var re = await query.Take(limit??100).ToListAsync();
-                return Result<object>.Success(re, await query.CountAsync());
+                return Result<object>.Success(re, await query.CountAsync(), Message.SUCCESS);
             }
             catch (Exception ex)
             {
@@ -96,8 +100,6 @@ namespace SpeedWebAPI.Services
                     {
                         await UpdateSpeedLimitPush(item);
                     }
-
-                    return Result<object>.Success(speedLimitParams);
                 }
                 return Result<object>.Success(speedLimitParams);
             }
@@ -111,19 +113,18 @@ namespace SpeedWebAPI.Services
         {
             try
             {
-                    foreach (SpeedProviderUpLoadVm item in speedProviderUpLoad)
-                    {
-                        await UpdLoadSpeedProvider(item);
-                    }
+                foreach (SpeedProviderUpLoadVm item in speedProviderUpLoad)
+                {
+                    await UpdLoadSpeedProvider(item);
+                }
 
-                    return Result<object>.Success(speedProviderUpLoad);
+                return Result<object>.Success(new SpeedProviderUpLoadVm(), 0, Message.SUCCESS);
             }
             catch (Exception ex)
             {
                 return Result<object>.Error(ex.ToString());
             }
         }
-
 
         #region private method
 
