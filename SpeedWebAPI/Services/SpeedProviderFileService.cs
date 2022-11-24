@@ -77,6 +77,9 @@ namespace SpeedWebAPI.Services
 
                 await _speedLimitService.UpdloadSpeedProvider(listSpeed);
 
+                // Delete file temp
+                File.Delete(filePath);
+
                 return ResultFile<object>.Success(listSpeed, filePath, Message.SUCCESS);
             }
             catch (Exception ex)
@@ -187,7 +190,7 @@ namespace SpeedWebAPI.Services
 
                 var oldfileName = postedFile.FileName.Replace(Path.GetExtension(postedFile.FileName), "");
 
-                string fileName = oldfileName + DateTime.Now.Year.ToString() + DateTime.Now.Month.ToString() + DateTime.Now.Day.ToString()
+                string fileName = oldfileName + "_" + DateTime.Now.Year.ToString() + DateTime.Now.Month.ToString() + DateTime.Now.Day.ToString()
                                 + DateTime.Now.Hour.ToString() + DateTime.Now.Minute.ToString() + DateTime.Now.Second.ToString()
                                 + Path.GetExtension(postedFile.FileName);
 

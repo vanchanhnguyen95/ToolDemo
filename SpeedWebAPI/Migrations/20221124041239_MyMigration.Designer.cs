@@ -10,7 +10,7 @@ using SpeedWebAPI.Infrastructure;
 namespace SpeedWebAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20221123012242_MyMigration")]
+    [Migration("20221124041239_MyMigration")]
     partial class MyMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

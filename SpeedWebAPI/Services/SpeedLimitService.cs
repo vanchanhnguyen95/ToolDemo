@@ -162,30 +162,32 @@ namespace SpeedWebAPI.Services
         {
             var obj = await Db.SpeedLimits
                 .Where(x => x.Lat == speedProvider.Lat && x.Lng == speedProvider.Lng).AsNoTracking().FirstOrDefaultAsync();
+
             if (obj != null)
             {
+                // Đã có dữ liệu trong database thì bỏ qua luôn 
+
                 //obj.MinSpeed = speedLimit.MinSpeed;
                 //obj.MaxSpeed = speedLimit.MaxSpeed;
-                obj.UpdateCount++;
-                obj.UpdatedDate = DateTime.Now;
-                obj.UpdatedBy = $"Updload numbers {obj.UpdateCount?.ToString()}";
+                //obj.UpdateCount++;
+                //obj.UpdatedDate = DateTime.Now;
+                //obj.UpdatedBy = $"Updload numbers {obj.UpdateCount?.ToString()}";
 
-                Db.Entry(obj).State = EntityState.Modified;
+                //Db.Entry(obj).State = EntityState.Modified;
+                return Result<object>.Success(obj);
             }
-            else
-            {
-                obj = new SpeedLimit();
-                obj.Lat = speedProvider.Lat;
-                obj.Lng = speedProvider.Lng;
-                obj.SegmentID = speedProvider.SegmentID;
-                obj.Note = speedProvider.Note;
-                obj.ProviderType = 1;
-                obj.DeleteFlag = 0;
-                obj.CreatedDate = DateTime.Now;
-                obj.CreatedBy = "UploadFile";
-                obj.UpdateCount = 0;
-                Db.SpeedLimits.Add(obj);
-            }
+
+            obj = new SpeedLimit();
+            obj.Lat = speedProvider.Lat;
+            obj.Lng = speedProvider.Lng;
+            obj.SegmentID = speedProvider.SegmentID;
+            obj.Note = speedProvider.Note;
+            obj.ProviderType = 1;
+            obj.DeleteFlag = 0;
+            obj.CreatedDate = DateTime.Now;
+            obj.CreatedBy = "UploadFile";
+            obj.UpdateCount = 0;
+            Db.SpeedLimits.Add(obj);
 
             await Db.SaveChangesAsync();
             return Result<object>.Success(obj);
