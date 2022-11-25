@@ -41,6 +41,32 @@ namespace OpenFileDialogueSample
             }
         }
 
+        private async void btnBrowserDowload_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog dialogDowload = new OpenFileDialog
+            {
+                InitialDirectory = @"D:\",
+                Title = "Browse Text Files",
+
+                CheckFileExists = true,
+                CheckPathExists = true,
+
+                DefaultExt = "txt",
+                Filter = "txt files (*.txt)|*.txt",
+                FilterIndex = 2,
+                RestoreDirectory = true,
+
+                ReadOnlyChecked = true,
+                ShowReadOnly = true
+            };
+
+            if (dialogDowload.ShowDialog() == DialogResult.OK)
+            {
+                txtDowload.Text = dialogDowload.FileName;
+                //txtResult.Text = await Task.Run(() => DowloadFileAsync(txtDowload.Text));
+            }
+        }
+
         public async Task<string> UploadFileAsync(string path)
         {
             try
@@ -77,13 +103,49 @@ namespace OpenFileDialogueSample
 
         }
 
+        public async Task<string> DowloadFileAsync(string path)
+        {
+            try
+            {
+                HttpClient client = new HttpClient();
+                // we need to send a request with multipart/form-data
+                var multiForm = new MultipartFormDataContent();
+
+                // add file and directly upload it
+                FileStream fs = File.OpenRead(path);
+                multiForm.Add(new StreamContent(fs), "files", Path.GetFileName(path));
+
+                // send request to API
+                var url = "https://localhost:5001/api/v1/FileSpeedProvider/GetFileListSpeed";
+                var response = await client.PostAsync(url, multiForm);
+
+                // Có lỗi khi gọi api Upload file
+                if (!response.IsSuccessStatusCode)
+                    return "Upload file error";
+
+                var contents = await response.Content.ReadAsStringAsync();
+                var responseData = JsonConvert.DeserializeObject<ResponseData>(contents);
+
+                // Có lỗi trả về từ phía api upload file
+                if (responseData.Status != "true")
+                    return responseData.Status;
+
+                return responseData.Status;
+            }
+            catch (Exception ex)
+            {
+                return ex.ToString();
+            }
+
+        }
+
         public class ResponseData
         {
             public string Status { get; set; }
             public string Data { get; set; }
             public string FilePath { get; set; }
             public string Message { get; set; }
-           
+
         }
 
         private void BrowseMultipleButton_Click(object sender, EventArgs e)
@@ -126,5 +188,59 @@ namespace OpenFileDialogueSample
         {
             return false;
         }
+
+        private async void btnDowload_Click(object sender, EventArgs e)
+        {
+            string path = txtDowload.Text.Trim();
+
+            HttpClient client = new HttpClient();
+            // we need to send a request with multipart/form-data
+            var multiForm = new MultipartFormDataContent();
+
+            // add file and directly upload it
+            FileStream fs = File.OpenRead(path);
+            multiForm.Add(new StreamContent(fs), "files", Path.GetFileName(path));
+
+            // send request to API
+            var url = "https://localhost:5001/api/v1/FileSpeedProvider/GetFileListSpeed";
+
+            var response = await client.PostAsync(url, multiForm);
+           
+
+            // Có lỗi khi gọi api Upload file
+            if (!response.IsSuccessStatusCode)
+                return;
+
+            //var httpContent = response.Result.Content;
+            var content = response.Content.ReadAsStringAsync().Result;
+
+            SaveFileDialog saveFileDialog1 = new SaveFileDialog();
+            saveFileDialog1.InitialDirectory = @"C:\";
+            saveFileDialog1.Title = "Save text Files";
+            saveFileDialog1.CheckFileExists = true;
+            saveFileDialog1.CheckPathExists = true;
+            saveFileDialog1.DefaultExt = "txt";
+            saveFileDialog1.Filter = "Text files (*.txt)|*.txt";
+            saveFileDialog1.FilterIndex = 2;
+            saveFileDialog1.RestoreDirectory = true;
+            saveFileDialog1.FileName = "";
+            if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                try
+                {
+                    string pathName = saveFileDialog1.FileName;
+                    StreamWriter sw = new StreamWriter(pathName);
+                    sw.WriteLine(content);//content.Result: nội dung file
+                    //sw.WriteLine(color);
+                    sw.Close();
+                }
+                catch (Exception error)
+                {
+                    MessageBox.Show(error.ToString());
+                }
+            }
+
+        }
+
     }
 }

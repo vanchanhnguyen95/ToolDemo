@@ -34,6 +34,9 @@
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.BrowseButton = new System.Windows.Forms.Button();
             this.txtResult = new System.Windows.Forms.TextBox();
+            this.txtDowload = new System.Windows.Forms.TextBox();
+            this.btnBrowserDowload = new System.Windows.Forms.Button();
+            this.btnDowload = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // openFileDialog1
@@ -43,14 +46,14 @@
             // PhotoGallary
             // 
             this.PhotoGallary.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
-            this.PhotoGallary.Location = new System.Drawing.Point(10, 133);
+            this.PhotoGallary.Location = new System.Drawing.Point(10, 182);
             this.PhotoGallary.Name = "PhotoGallary";
-            this.PhotoGallary.Size = new System.Drawing.Size(495, 213);
+            this.PhotoGallary.Size = new System.Drawing.Size(495, 164);
             this.PhotoGallary.TabIndex = 7;
             // 
             // BrowseMultipleButton
             // 
-            this.BrowseMultipleButton.Location = new System.Drawing.Point(375, 100);
+            this.BrowseMultipleButton.Location = new System.Drawing.Point(375, 131);
             this.BrowseMultipleButton.Name = "BrowseMultipleButton";
             this.BrowseMultipleButton.Size = new System.Drawing.Size(130, 27);
             this.BrowseMultipleButton.TabIndex = 6;
@@ -77,16 +80,46 @@
             // 
             // txtResult
             // 
-            this.txtResult.Location = new System.Drawing.Point(68, 73);
+            this.txtResult.Location = new System.Drawing.Point(68, 138);
             this.txtResult.Name = "txtResult";
             this.txtResult.Size = new System.Drawing.Size(285, 20);
             this.txtResult.TabIndex = 8;
+            // 
+            // txtDowload
+            // 
+            this.txtDowload.Location = new System.Drawing.Point(68, 64);
+            this.txtDowload.Name = "txtDowload";
+            this.txtDowload.Size = new System.Drawing.Size(285, 20);
+            this.txtDowload.TabIndex = 9;
+            // 
+            // btnBrowserDowload
+            // 
+            this.btnBrowserDowload.Location = new System.Drawing.Point(375, 64);
+            this.btnBrowserDowload.Name = "btnBrowserDowload";
+            this.btnBrowserDowload.Size = new System.Drawing.Size(130, 23);
+            this.btnBrowserDowload.TabIndex = 10;
+            this.btnBrowserDowload.Text = "BrowserDowload";
+            this.btnBrowserDowload.UseVisualStyleBackColor = true;
+            this.btnBrowserDowload.Click += new System.EventHandler(this.btnBrowserDowload_Click);
+            // 
+            // btnDowload
+            // 
+            this.btnDowload.Location = new System.Drawing.Point(375, 94);
+            this.btnDowload.Name = "btnDowload";
+            this.btnDowload.Size = new System.Drawing.Size(130, 23);
+            this.btnDowload.TabIndex = 11;
+            this.btnDowload.Text = "Dowload";
+            this.btnDowload.UseVisualStyleBackColor = true;
+            this.btnDowload.Click += new System.EventHandler(this.btnDowload_Click);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(557, 366);
+            this.Controls.Add(this.btnDowload);
+            this.Controls.Add(this.btnBrowserDowload);
+            this.Controls.Add(this.txtDowload);
             this.Controls.Add(this.txtResult);
             this.Controls.Add(this.PhotoGallary);
             this.Controls.Add(this.BrowseMultipleButton);
@@ -108,6 +141,9 @@
         private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.Button BrowseButton;
         public System.Windows.Forms.TextBox txtResult;
+        private System.Windows.Forms.TextBox txtDowload;
+        private System.Windows.Forms.Button btnBrowserDowload;
+        private System.Windows.Forms.Button btnDowload;
     }
 }
 
