@@ -37,32 +37,42 @@ namespace OpenFileDialogueSample
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
                 textBox1.Text = openFileDialog1.FileName;
-                await Task.Run(() => UploadFileAsync(textBox1.Text));
+                txtResult.Text = await Task.Run(() => UploadFileAsync(textBox1.Text));
             }
         }
 
-        public static async Task UploadFileAsync(string path)
+        public async Task<string> UploadFileAsync(string path)
         {
-            HttpClient client = new HttpClient();
-            // we need to send a request with multipart/form-data
-            var multiForm = new MultipartFormDataContent();
-
-            // add file and directly upload it
-            FileStream fs = File.OpenRead(path);
-            multiForm.Add(new StreamContent(fs), "files", Path.GetFileName(path));
-
-            // send request to API
-            var url = "https://localhost:5001/api/v1/FileSpeedProvider/UploadFile";
-            var response = await client.PostAsync(url, multiForm);
-            if (response.IsSuccessStatusCode)
+            try
             {
+                HttpClient client = new HttpClient();
+                // we need to send a request with multipart/form-data
+                var multiForm = new MultipartFormDataContent();
+
+                // add file and directly upload it
+                FileStream fs = File.OpenRead(path);
+                multiForm.Add(new StreamContent(fs), "files", Path.GetFileName(path));
+
+                // send request to API
+                var url = "https://localhost:5001/api/v1/FileSpeedProvider/UploadFile";
+                var response = await client.PostAsync(url, multiForm);
+
+                // Có lỗi khi gọi api Upload file
+                if (!response.IsSuccessStatusCode)
+                    return "Upload file error";
+
                 var contents = await response.Content.ReadAsStringAsync();
                 var responseData = JsonConvert.DeserializeObject<ResponseData>(contents);
-                MessageBox.Show(responseData.Status);
+
+                // Có lỗi trả về từ phía api upload file
+                if (responseData.Status != "true")
+                    return responseData.Status;
+
+                return responseData.Status;
             }
-            else
+            catch (Exception ex)
             {
-                MessageBox.Show(response.ToString());
+                return ex.ToString();
             }
 
         }
