@@ -80,7 +80,7 @@ namespace SpeedWebAPI.Services
                 // Delete file temp
                 File.Delete(filePath);
 
-                return ResultFile<object>.Success(listSpeed, filePath, Message.SUCCESS);
+                return ResultFile<object>.Success(null, filePath, Message.SUCCESS);
             }
             catch (Exception ex)
             {

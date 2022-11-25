@@ -42,8 +42,10 @@ namespace SpeedWebAPI.Controllers
         [HttpPost, DisableRequestSizeLimit]
         [MapToApiVersion("1")]
         [Route("GetFileListSpeed")]
-        public async Task<IActionResult> GetFileListSpeedFromFileUpload(IFormFile postedFile)
+        public async Task<IActionResult> GetFileListSpeedFromFileUpload(IFormFile file)
         {
+            IFormFile postedFile = Request.Form.Files[0];
+
             // ... code for validation and get the file
             var result = await _speedProviderService.GetFileListSpeedFromFileUpd(postedFile);
 
