@@ -37,10 +37,7 @@ namespace OpenFileDialogueSample
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
                 textBox1.Text = openFileDialog1.FileName;
-                //var task = await UploadFileAsync(textBox1.Text);
-                //await Task.Run(() => UploadFileAsync(textBox1.Text));
                 await Task.Run(() => UploadFileAsync(textBox1.Text));
-                //UploadFileAsync(textBox1.Text);
             }
         }
 
@@ -59,18 +56,8 @@ namespace OpenFileDialogueSample
             var response = await client.PostAsync(url, multiForm);
             if (response.IsSuccessStatusCode)
             {
-                //MessageBox.Show(response.Content.ToString());
-                //MessageBox.Show("Success");
-                //Console.WriteLine(response.Content.ToString());
-                //Console.ReadLine();
-
-                //dynamic json = JsonConvert.DeserializeObject(response.Content.ToString());
-
-                //var responseData = JsonConvert.DeserializeObject<ResponseData>(response.ToString());
-                //MessageBox.Show(responseData.ToString());
                 var contents = await response.Content.ReadAsStringAsync();
                 var responseData = JsonConvert.DeserializeObject<ResponseData>(contents);
-                //MessageBox.Show(responseData.Message);
                 MessageBox.Show(responseData.Status);
             }
             else
@@ -79,7 +66,6 @@ namespace OpenFileDialogueSample
             }
 
         }
-
 
         public class ResponseData
         {
