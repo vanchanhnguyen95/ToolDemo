@@ -1,5 +1,7 @@
 ﻿using Newtonsoft.Json;
+using OpenFileDialogueSample.Constants;
 using System;
+using System.Configuration;
 using System.Drawing;
 using System.IO;
 using System.Net.Http;
@@ -10,6 +12,9 @@ namespace OpenFileDialogueSample
 {
     public partial class Form1 : Form
     {
+        public string host_speed = ConfigurationManager.AppSettings["HOST_SPEED"];
+        public string host_speed_local = ConfigurationManager.AppSettings["HOST_SPEED_LOCAL"];
+
         public Form1()
         {
             InitializeComponent();
@@ -80,7 +85,8 @@ namespace OpenFileDialogueSample
                 multiForm.Add(new StreamContent(fs), "files", Path.GetFileName(path));
 
                 // send request to API
-                var url = "https://localhost:5001/api/v1/FileSpeedProvider/UploadFile";
+                //var url = "https://localhost:5001/api/v1/FileSpeedProvider/UploadFile";
+                var url = host_speed_local + LinkApi.API_SPEED_UPLOADFILE;
                 var response = await client.PostAsync(url, multiForm);
 
                 // Có lỗi khi gọi api Upload file
@@ -116,7 +122,8 @@ namespace OpenFileDialogueSample
                 multiForm.Add(new StreamContent(fs), "files", Path.GetFileName(path));
 
                 // send request to API
-                var url = "https://localhost:5001/api/v1/FileSpeedProvider/GetFileListSpeed";
+                //var url = host_speed_local + @"/api/v1/FileSpeedProvider/GetFileListSpeed";
+                var url = host_speed_local + LinkApi.API_SPEED_GETFILELISTSPEED;
                 var response = await client.PostAsync(url, multiForm);
 
                 // Có lỗi khi gọi api Upload file
@@ -202,7 +209,8 @@ namespace OpenFileDialogueSample
             multiForm.Add(new StreamContent(fs), "files", Path.GetFileName(path));
 
             // send request to API
-            var url = "https://localhost:5001/api/v1/FileSpeedProvider/GetFileListSpeed";
+            //var url = host_speed_local+ "/api/v1/FileSpeedProvider/GetFileListSpeed";
+            var url = host_speed_local + LinkApi.API_SPEED_GETFILELISTSPEED;
 
             var response = await client.PostAsync(url, multiForm);
            
@@ -223,7 +231,8 @@ namespace OpenFileDialogueSample
             saveFileDialog1.Filter = "Text files (*.txt)|*.txt";
             saveFileDialog1.FilterIndex = 2;
             saveFileDialog1.RestoreDirectory = true;
-            saveFileDialog1.FileName = "";
+            saveFileDialog1.FileName = Path.GetFileName(path).Replace(".txt","") + "_" + DateTime.Now.Year.ToString() + DateTime.Now.Month.ToString() + DateTime.Now.Day.ToString()
+                                + DateTime.Now.Hour.ToString() + DateTime.Now.Minute.ToString() + DateTime.Now.Second.ToString();
             if (saveFileDialog1.ShowDialog() == DialogResult.OK)
             {
                 try
