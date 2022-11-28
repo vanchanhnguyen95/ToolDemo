@@ -7,5 +7,6 @@
         public int? MinSpeed { get; set; } = 0;
         public int? MaxSpeed { get; set; } = 0;
         public int? ProviderType { get; set; } = 1;
+        public bool? PointError { get; set; } = false;
     }
 }

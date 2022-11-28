@@ -27,6 +27,9 @@ namespace SpeedWebAPI.Migrations
                     b.Property<double>("Lng")
                         .HasColumnType("float");
 
+                    b.Property<int?>("ProviderType")
+                        .HasColumnType("int");
+
                     b.Property<string>("CreatedBy")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
@@ -46,8 +49,8 @@ namespace SpeedWebAPI.Migrations
                     b.Property<string>("Note")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("ProviderType")
-                        .HasColumnType("int");
+                    b.Property<bool>("PointError")
+                        .HasColumnType("bit");
 
                     b.Property<long?>("SegmentID")
                         .HasColumnType("bigint");
@@ -62,7 +65,7 @@ namespace SpeedWebAPI.Migrations
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("datetime2");
 
-                    b.HasKey("Lat", "Lng");
+                    b.HasKey("Lat", "Lng", "ProviderType");
 
                     b.ToTable("SpeedLimit");
                 });

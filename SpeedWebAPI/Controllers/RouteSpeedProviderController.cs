@@ -45,19 +45,5 @@ namespace SpeedWebAPI.Controllers
             var data = await _speedLimitService.UpdateSpeedLimitPush(speedLimitParams);
             return Ok(data);
         }
-
-        /// <summary>
-        /// Cập nhật tốc độ giới hạn
-        /// </summary>
-        /// <param name="speedLimit">Đối tượng cần cập nhật tọa độ</param>
-        /// <returns></returns>
-        //[HttpPost]
-        //[MapToApiVersion("1")]
-        //[Route("Save")]
-        //public async Task<IActionResult> Save([FromBody] SpeedLimitPush speedLimit)
-        //{
-        //    var data = await _speedLimitService.Save(speedLimit);
-        //    return Ok(data);
-        //}
     }
 }

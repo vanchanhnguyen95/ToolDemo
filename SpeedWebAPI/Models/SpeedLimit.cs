@@ -16,7 +16,8 @@ namespace SpeedWebAPI.Models
         public double Lng { get; set; }
         public int? MinSpeed { get; set; } = 0;
         public int? MaxSpeed { get; set; } = 0;
-        public int? ProviderType { get; set; } = 1;
+        public int? ProviderType { get; set; } = 1;//1:Navital; 2:VietMap
+        public bool? PointError { get; set; } = false;//True: Tọa độ cung cấp bị lỗi, False: Tọa độ cung cấp ko bị lỗi
         public long? SegmentID { get; set; }
         public string Note { get; set; }
     }

@@ -10,7 +10,7 @@ using SpeedWebAPI.Infrastructure;
 namespace SpeedWebAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20221124041239_MyMigration")]
+    [Migration("20221128042604_MyMigration")]
     partial class MyMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -28,6 +28,9 @@ namespace SpeedWebAPI.Migrations
 
                     b.Property<double>("Lng")
                         .HasColumnType("float");
+
+                    b.Property<int?>("ProviderType")
+                        .HasColumnType("int");
 
                     b.Property<string>("CreatedBy")
                         .HasMaxLength(256)
@@ -48,8 +51,8 @@ namespace SpeedWebAPI.Migrations
                     b.Property<string>("Note")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("ProviderType")
-                        .HasColumnType("int");
+                    b.Property<bool>("PointError")
+                        .HasColumnType("bit");
 
                     b.Property<long?>("SegmentID")
                         .HasColumnType("bigint");
@@ -64,7 +67,7 @@ namespace SpeedWebAPI.Migrations
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("datetime2");
 
-                    b.HasKey("Lat", "Lng");
+                    b.HasKey("Lat", "Lng", "ProviderType");
 
                     b.ToTable("SpeedLimit");
                 });
