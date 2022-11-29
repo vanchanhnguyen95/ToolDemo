@@ -51,11 +51,8 @@ namespace SpeedWebAPI.Services
                 if (limit == null || limit > 100)
                     limit = 100;
 
-                // Nếu Update Date mà < 6 tháng thì không cho hiển thị ra
-                DateTime UpdDateAllow = (DateTime)DateTime.Now.AddMonths(-6).Date;
-
                 var query = (from s in Db.SpeedLimits where s.DeleteFlag == 0 && s.PointError == false
-                             select s).OrderBy(x => x.MaxSpeed).Select(x
+                             select s).OrderBy(x => x.UpdateCount).Select(x
                              => new SpeedLimit()
                              {
                                  Lat = x.Lat,
@@ -63,6 +60,10 @@ namespace SpeedWebAPI.Services
                                  ProviderType = x.ProviderType,
                                  UpdatedDate = x.UpdatedDate
                              });
+
+               
+                // Nếu Update Date mà < 6 tháng thì không cho hiển thị ra
+                DateTime UpdDateAllow = (DateTime)DateTime.Now.AddMonths(-6).Date;
 
                 var lstRe = new List<SpeedProvider>();
 

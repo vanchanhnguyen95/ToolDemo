@@ -3,8 +3,8 @@
     public enum DataSpeedUpLoad
     {
         ColSegmentID = 0,//Col SegmentID 
-        ColLat = 1,//Col Lat 
-        ColLng = 2,//Col Long
+        ColLng = 1,//Col Long
+        ColLat = 2,//Col Lat 
         ColNote = 3//Col Note
     }
 }

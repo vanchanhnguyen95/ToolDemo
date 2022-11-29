@@ -28,6 +28,7 @@ namespace SpeedWebAPI
 			{
 				Title = "Speed Web API",
 				Version = description.ApiVersion.ToString(),
+				Description = "Service Vận tốc giới hạn",
 			};
 
 			if (description.IsDeprecated)
