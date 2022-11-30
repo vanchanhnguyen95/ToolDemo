@@ -13,45 +13,45 @@ using System.Threading.Tasks;
 namespace SpeedWebAPI.Services
 {
     #region interface
-    public interface ISpeedLimitService : IBaseService<SpeedLimit>
+    public interface ISpeedLimit3PointService : IBaseService<SpeedLimit3Point>
     {
         /// <summary>
         /// Lấy thông tin SpeedLimit
         /// </summary>
         /// <param name="limit"></param>
         /// <returns></returns>
-        Task<object> GetSpeedProviders(int? limit);
+        Task<object> GetSpeedProviders3Point(int? limit);
 
         /// <summary>
         /// Update SpeedLimit từ api Push
         /// </summary>
         /// <param name="speedLimitParams"></param>
         /// <returns></returns>
-        Task<IResult<object>> UpdateSpeedLimitPush(SpeedLimitParams speedLimitParams);
+        Task<IResult<object>> UpdateSpeedLimitPush3Point(SpeedLimitParams speedLimitParams);
 
         /// <summary>
         /// Updload SpeedProvider từ file text
         /// </summary>
         /// <param name="speedProviderUpLoad"></param>
         /// <returns></returns>
-        Task<IResult<object>> UpdloadSpeedProvider(List<SpeedProviderUpLoadVm> speedProviderUpLoad);
+        Task<IResult<object>> UpdloadSpeedProvider3Point(List<SpeedProviderUpLoadVm> speedProviderUpLoad);
     }
 
     #endregion
 
-    public class SpeedLimitService : BaseService<SpeedLimit, ApplicationDbContext>, ISpeedLimitService
+    public class SpeedLimit3PointService : BaseService<SpeedLimit3Point, ApplicationDbContext>, ISpeedLimit3PointService
     {
-        public SpeedLimitService(ApplicationDbContext db) : base(db)
+        public SpeedLimit3PointService(ApplicationDbContext db) : base(db)
         {
         }
-        public async Task<object> GetSpeedProviders(int? limit)
+        public async Task<object> GetSpeedProviders3Point(int? limit)
         {
             try
             {
                 if (limit == null || limit > 100)
                     limit = 100;
 
-                var query = (from s in Db.SpeedLimits where s.DeleteFlag == 0 && s.PointError == false
+                var query = (from s in Db.SpeedLimit3Points where s.DeleteFlag == 0 && s.PointError == false
                              select s).OrderBy(x => x.UpdateCount).Select(x
                              => new SpeedLimit()
                              {
@@ -75,17 +75,6 @@ namespace SpeedWebAPI.Services
                     }
                 }
 
-                //var queryResult = (from s in query
-                //                   select s => {
-                //                       sp => new SpeedProvider
-                //                       (
-                //                        Lat = sp.Lat,
-                //                        Lng = x.Lng,
-                //                        ProviderType = x.ProviderType,
-                //                       )
-                //                   });
-
-                //var re = await query.Take(limit??100).ToListAsync();
                 var re = lstRe.Take(limit??100).ToList();
                 return Result<object>.Success(re, await query.CountAsync(), Message.SUCCESS);
             }
@@ -95,7 +84,7 @@ namespace SpeedWebAPI.Services
             }
         }
 
-        public async Task<IResult<object>> UpdateSpeedLimitPush(SpeedLimitParams speedLimitParams)
+        public async Task<IResult<object>> UpdateSpeedLimitPush3Point(SpeedLimitParams speedLimitParams)
         {
             foreach (SpeedLimitPush item in speedLimitParams.data)
             {
@@ -103,63 +92,19 @@ namespace SpeedWebAPI.Services
             }
 
             return Result<object>.Success(speedLimitParams);
-
-            //try
-            //{
-            //    if(speedLimitParams.data.Any())
-            //    {
-            //        foreach (SpeedLimitPush item in speedLimitParams.data)
-            //        {
-            //            await UpdateSpeedLimitPush(item);
-            //        }
-            //    }
-            //    return Result<object>.Success(speedLimitParams);
-            //}
-            //catch (Exception ex)
-            //{
-            //    return Result<object>.Error(ex.ToString());
-            //}
         }
 
-        //public async Task<IResult<object>> UpdloadSpeedProvider(List<SpeedProviderUpLoadVm> speedProviderUpLoad)
-        //{
-        //    try
-        //    {
-        //        foreach (SpeedProviderUpLoadVm item in speedProviderUpLoad)
-        //        {
-        //            await UpdLoadSpeedProvider(item);
-        //        }
 
-        //        return Result<object>.Success(new SpeedProviderUpLoadVm(), 0, Message.SUCCESS);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return Result<object>.Error(ex.ToString());
-        //    }
-        //}
-
-        public async Task<IResult<object>> UpdloadSpeedProvider(List<SpeedProviderUpLoadVm> speedProviderUpLoad)
+        public async Task<IResult<object>> UpdloadSpeedProvider3Point(List<SpeedProviderUpLoadVm> speedProviderUpLoad)
         {
             foreach (SpeedProviderUpLoadVm item in speedProviderUpLoad)
             {
-                await UpdLoadSpeedProvider(item);
+                await UpdloadSpeedProvider3Point(item);
             }
 
             return Result<object>.Success(new SpeedProviderUpLoadVm(), 0, Message.SUCCESS);
 
-            //try
-            //{
-            //    foreach (SpeedProviderUpLoadVm item in speedProviderUpLoad)
-            //    {
-            //        await UpdLoadSpeedProvider(item);
-            //    }
-
-            //    return Result<object>.Success(new SpeedProviderUpLoadVm(), 0, Message.SUCCESS);
-            //}
-            //catch (Exception ex)
-            //{
-            //    return Result<object>.Error(ex.ToString());
-            //}
+            
         }
 
         #region private method
@@ -173,7 +118,7 @@ namespace SpeedWebAPI.Services
         {
             try
             {
-                var obj = await Db.SpeedLimits
+                var obj = await Db.SpeedLimit3Points
                 .Where(x => x.Lat == speedLimit.Lat
                 && x.Lng == speedLimit.Lng
                 && x.ProviderType == speedLimit.ProviderType
@@ -192,7 +137,7 @@ namespace SpeedWebAPI.Services
                 }
                 else
                 {
-                    obj = new SpeedLimit();
+                    obj = new SpeedLimit3Point();
                     obj.Lat = speedLimit.Lat;
                     obj.Lng = speedLimit.Lng;
                     obj.ProviderType = 1;
@@ -200,7 +145,7 @@ namespace SpeedWebAPI.Services
                     obj.CreatedDate = DateTime.Now;
                     obj.UpdateCount = 0;
                     obj.PointError = speedLimit.PointError;
-                    Db.SpeedLimits.Add(obj);
+                    Db.SpeedLimit3Points.Add(obj);
                 }
 
                 await Db.SaveChangesAsync();
@@ -218,29 +163,30 @@ namespace SpeedWebAPI.Services
         /// </summary>
         /// <param name="speedProvider"></param>
         /// <returns></returns>
-        private async Task<IResult<object>> UpdLoadSpeedProvider(SpeedProviderUpLoadVm speedProvider)
+        private async Task<IResult<object>> UpdloadSpeedProvider3Point(SpeedProviderUpLoadVm speedProvider)
         {
             try
             {
-                var obj = await Db.SpeedLimits
+                var obj = await Db.SpeedLimit3Points
                .Where(x => x.Lat == speedProvider.Lat && x.Lng == speedProvider.Lng).AsNoTracking().FirstOrDefaultAsync();
 
                 // Đã có dữ liệu trong database thì bỏ qua luôn
                 if (obj != null)
                     return Result<object>.Success(obj);
 
-                obj = new SpeedLimit();
+                obj = new SpeedLimit3Point();
                 obj.Lat = speedProvider.Lat;
                 obj.Lng = speedProvider.Lng;
                 obj.SegmentID = speedProvider.SegmentID;
                 //obj.Note = speedProvider.Note;
                 obj.ProviderType = 1;
+                obj.Position = speedProvider.Position;
                 obj.DeleteFlag = 0;
                 obj.CreatedDate = DateTime.Now;
                 obj.CreatedBy = "UploadFile";
                 obj.UpdateCount = 0;
                 obj.PointError = false;
-                Db.SpeedLimits.Add(obj);
+                Db.SpeedLimit3Points.Add(obj);
 
                 await Db.SaveChangesAsync();
                 return Result<object>.Success(obj);

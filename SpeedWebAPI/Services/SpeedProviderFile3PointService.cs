@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using SpeedWebAPI.Common.Constants;
 using SpeedWebAPI.Common.Enum;
 using SpeedWebAPI.Common.Models;
-using SpeedWebAPI.Common.Constants;
 using SpeedWebAPI.Infrastructure;
 using SpeedWebAPI.Models;
 using SpeedWebAPI.Services.Base;
@@ -17,38 +17,28 @@ using System.Threading.Tasks;
 namespace SpeedWebAPI.Services
 {
     #region interface
-    public interface ISpeedProviderFileService : IBaseService<SpeedLimit>
+    public interface ISpeedProviderFile3PointService : IBaseService<SpeedLimit3Point>
     {
-        /// <summary>
-        /// Update List Speed Provider
-        /// </summary>
-        /// <param name="postedFile">upload file .txt</param>
-        /// <returns></returns>
-        Task<IResultFile<object>> UpdateListSpeedProvider(IFormFile postedFile);
+        Task<IResultFile<object>> UpdateListSpeedProvider3Point(IFormFile postedFile);
 
-        /// <summary>
-        /// Get File List Speed From File Updload
-        /// </summary>
-        /// <param name="postedFile">upload file .txt</param>
-        /// <returns></returns>
-        Task<IResultFile<object>> GetFileListSpeedFromFileUpd(IFormFile postedFile);
+        Task<IResultFile<object>> GetFileListSpeedFromFileUpd3Point(IFormFile postedFile);
     }
     #endregion
 
-    public class SpeedProviderFileService : BaseService<SpeedLimit, ApplicationDbContext>, ISpeedProviderFileService
+    public class SpeedProviderFile3PointService : BaseService<SpeedLimit3Point, ApplicationDbContext>, ISpeedProviderFile3PointService
     {
-        private readonly ISpeedLimitService _speedLimitService;
+        private readonly ISpeedLimit3PointService _speedLimit3PointService;
         [Obsolete]
         private IHostingEnvironment _environment;
 
         [Obsolete]
-        public SpeedProviderFileService(ApplicationDbContext db, ISpeedLimitService speedLimitService, IHostingEnvironment environment) : base(db)
+        public SpeedProviderFile3PointService(ApplicationDbContext db, ISpeedLimit3PointService speedLimit3PointService, IHostingEnvironment environment) : base(db)
         {
-            _speedLimitService = speedLimitService;
+            _speedLimit3PointService = speedLimit3PointService;
             _environment = environment;
         }
 
-        public async Task<IResultFile<object>> UpdateListSpeedProvider(IFormFile postedFile)
+        public async Task<IResultFile<object>> UpdateListSpeedProvider3Point(IFormFile postedFile)
         {
             try
             {
@@ -66,7 +56,7 @@ namespace SpeedWebAPI.Services
                     return ResultFile<object>.Error(filePath, ErrMessage.NOT_FIND_UPD);
                 }
 
-                List<SpeedProviderUpLoadVm> listSpeed = await GetSpeedProviderFromUpload(filePath);
+                List<SpeedProviderUpLoadVm> listSpeed = await GetSpeedProviderFromUpload3Point(filePath);
 
                 if (!listSpeed.Any() || listSpeed.Count() == 0)
                 {
@@ -75,7 +65,7 @@ namespace SpeedWebAPI.Services
                     return ResultFile<object>.Error(string.Empty, ErrMessage.GET_DATA_FILE_TXT);
                 }
 
-                await _speedLimitService.UpdloadSpeedProvider(listSpeed);
+                await _speedLimit3PointService.UpdloadSpeedProvider3Point(listSpeed);
 
                 // Delete file temp
                 File.Delete(filePath);
@@ -88,7 +78,7 @@ namespace SpeedWebAPI.Services
             }
         }
 
-        public async Task<IResultFile<object>> GetFileListSpeedFromFileUpd(IFormFile postedFile)
+        public async Task<IResultFile<object>> GetFileListSpeedFromFileUpd3Point(IFormFile postedFile)
         {
             try
             {
@@ -108,7 +98,7 @@ namespace SpeedWebAPI.Services
                 }
 
                 // Get list SpeedProvider from File UpLoad
-                List<SpeedProviderUpLoadVm> listSpeedUpload = await GetSpeedProviderFromUpload(filePath);
+                List<SpeedProviderUpLoadVm> listSpeedUpload = await GetSpeedProviderFromUpload3Point(filePath);
 
                 if (!listSpeedUpload.Any() || listSpeedUpload.Count() == 0)
                 {
@@ -118,17 +108,18 @@ namespace SpeedWebAPI.Services
                 }
 
                 // Get list SpeedProvider from Database
-                List<SpeedProviderDbVm> listSpeedDb = await GetSpeedProviderFromDb(listSpeedUpload);
+                List<SpeedProviderUpLoad3PointVm> listSpeedDb = await GetSpeedProviderFromDb3Point(listSpeedUpload);
 
                 if (!listSpeedDb.Any() || listSpeedDb.Count() == 0)
                 {
                     // Delete file temp
                     File.Delete(filePath);
-                    return ResultFile<object>.Success(listSpeedDb,string.Empty, ErrMessage.NO_DATA_SPEED);
+                    return ResultFile<object>.Success(listSpeedDb, string.Empty, ErrMessage.NO_DATA_SPEED);
                 }
 
-                await WriteFileFromListUpd(listSpeedDb, filePath);
-                return ResultFile<object>.Success(listSpeedDb,filePath, Message.GET_SPEED_SUCCESS);
+                //await WriteFileFromListUpd3Point(listSpeedDb, filePath);
+                await WriteFileFromListUpd3Point(listSpeedDb, filePath);
+                return ResultFile<object>.Success(listSpeedDb, filePath, Message.GET_SPEED_SUCCESS);
             }
             catch (Exception ex)
             {
@@ -136,7 +127,6 @@ namespace SpeedWebAPI.Services
             }
         }
 
-        
         #region private method
 
         private async Task<string> GetLinkFileUpLoad(IFormFile postedFile)
@@ -210,53 +200,20 @@ namespace SpeedWebAPI.Services
 
         }
 
-        private async Task<List<SpeedProviderUpLoadVm>> GetSpeedProviderFromUpload(string filePath)
+        private async Task<List<SpeedProviderUpLoad3PointVm>> GetSpeedProviderFromDb3Point(List<SpeedProviderUpLoadVm> listUpload)
         {
-            if (File.Exists(filePath))
-            {
-                // Read file using StreamReader. Reads file line by line  
-                using (StreamReader file = new StreamReader(filePath))
-                {
-                    string ln;
-                    int count = 0;
-                    List<SpeedProviderUpLoadVm> listUpload = new List<SpeedProviderUpLoadVm>();
-                    SpeedProviderUpLoadVm lineAdd;
-                    while ((ln = await file.ReadLineAsync()) != null)
-                    {
-                        count++;
-                        lineAdd = new SpeedProviderUpLoadVm();
-                        List<string> linesUpload = ln.Split(',').ToList();
-
-                        if (count < 2) continue; // Bỏ qua dòng header: Tên cột
-
-                        // Lấy dữ liệu
-                        lineAdd.SegmentID = Convert.ToInt64((linesUpload[(int)DataSpeedUpLoad.ColSegmentID]).ToString());
-                        lineAdd.Lat = Convert.ToDouble((linesUpload[(int)DataSpeedUpLoad.ColLat]).ToString());
-                        lineAdd.Lng = Convert.ToDouble((linesUpload[(int)DataSpeedUpLoad.ColLng]).ToString());
-                        //lineAdd.Note = (linesUpload[(int)DataSpeedUpLoad.ColNote]).ToString();
-                        listUpload.Add(lineAdd);
-                    }
-                    file.Close();
-
-                    return listUpload;
-                }
-            }
-            return new List<SpeedProviderUpLoadVm>();
-        }
-
-        private async Task<List<SpeedProviderDbVm>> GetSpeedProviderFromDb(List<SpeedProviderUpLoadVm> listUpload)
-        {
-            List<SpeedProviderDbVm> listResult = new List<SpeedProviderDbVm>();
+            List<SpeedProviderUpLoad3PointVm> listResult = new List<SpeedProviderUpLoad3PointVm>();
 
             if (!listUpload.Any())
             {
                 return listResult;
             }
 
-            SpeedProviderDbVm lineAdd;
+            SpeedProviderUpLoad3PointVm lineAdd;
+            SpeedProviderUpLoad3PointVm lineRemove;
             foreach (SpeedProviderUpLoadVm itemSpeed in listUpload)
             {
-                var obj = await Db.SpeedLimits
+                var obj = await Db.SpeedLimit3Points
                     .Where(x => x.Lat == itemSpeed.Lat && x.Lng == itemSpeed.Lng && x.DeleteFlag == 0).AsNoTracking().FirstOrDefaultAsync();
 
                 if (obj == null)
@@ -264,20 +221,105 @@ namespace SpeedWebAPI.Services
                     continue;
                 }
 
-                lineAdd = new SpeedProviderDbVm();
-                lineAdd.Lat = obj.Lat;
-                lineAdd.Lng = obj.Lng;
-                lineAdd.SegmentID = obj.SegmentID ?? 0;
-                lineAdd.MinSpeed = obj.MinSpeed;
-                lineAdd.MaxSpeed = obj.MaxSpeed;
+                SpeedProviderUpLoad3PointVm item = null;
+                if (listResult != null && listResult.Any())
+                {
+                    item = listResult.Where(x => x.SegmentID == itemSpeed.SegmentID).SingleOrDefault();
+                }    
 
-                listResult.Add(lineAdd);
+                if(item == null)
+                {
+                    lineAdd = new SpeedProviderUpLoad3PointVm();
+
+                    lineAdd.SegmentID = obj.SegmentID ?? 0;
+
+                    if (itemSpeed.Position == SpeedProviderCons.Position.START)
+                    {
+                        lineAdd.Lat1 = obj.Lat;
+                        lineAdd.Lng1 = obj.Lng;
+                        lineAdd.MinSpeed1 = obj.MinSpeed;
+                        lineAdd.MaxSpeed1 = obj.MaxSpeed;
+
+                    }
+                    if (itemSpeed.Position == SpeedProviderCons.Position.MID)
+                    {
+                        lineAdd.Lat2 = obj.Lat;
+                        lineAdd.Lng2 = obj.Lng;
+                        lineAdd.MinSpeed2 = obj.MinSpeed;
+                        lineAdd.MaxSpeed2 = obj.MaxSpeed;
+                    }
+                    if (itemSpeed.Position == SpeedProviderCons.Position.END)
+                    {
+                        lineAdd.Lat3 = obj.Lat;
+                        lineAdd.Lng3 = obj.Lng;
+                        lineAdd.MinSpeed3 = obj.MinSpeed;
+                        lineAdd.MaxSpeed3 = obj.MaxSpeed;
+                    }
+
+                    lineAdd.Position = obj.Position;
+                    listResult.Add(lineAdd);
+                }
+                else
+                {
+                    // Remove item old
+                    lineAdd = new SpeedProviderUpLoad3PointVm();
+                    //lineRemove = new SpeedProviderUpLoad3PointVm();
+
+                    //lineRemove.SegmentID = obj.SegmentID ?? 0;
+                    //lineRemove.Lat1 = item.Lat1;
+                    //lineRemove.Lng1 = item.Lng1;
+                    //lineRemove.Lat2 = item.Lat2;
+                    //lineRemove.Lng2 = item.Lng2;
+                    //lineRemove.Lat3 = item.Lat3;
+                    //lineRemove.Lng3 = item.Lng3;
+                    //lineRemove.MinSpeed1 = item.MinSpeed1;
+                    //lineRemove.MaxSpeed1 = item.MaxSpeed1;
+                    //lineRemove.MinSpeed2 = item.MinSpeed2;
+                    //lineRemove.MaxSpeed2 = item.MaxSpeed2;
+                    //lineRemove.MinSpeed3 = item.MinSpeed3;
+                    //lineRemove.MaxSpeed3 = item.MinSpeed3;
+                    //lineRemove.Position = item.Position;
+
+                    lineAdd = item;
+                    listResult.Remove(item);
+                    lineAdd.SegmentID = obj.SegmentID ?? 0;
+                    if (itemSpeed.Position == SpeedProviderCons.Position.START)
+                    {
+                        lineAdd.Lat1 = obj.Lat;
+                        lineAdd.Lng1 = obj.Lng;
+                        lineAdd.MinSpeed1 = obj.MinSpeed;
+                        lineAdd.MaxSpeed1 = obj.MaxSpeed;
+
+                    }
+                    if (itemSpeed.Position == SpeedProviderCons.Position.MID)
+                    {
+                        lineAdd.Lat2 = obj.Lat;
+                        lineAdd.Lng2 = obj.Lng;
+                        lineAdd.MinSpeed2 = obj.MinSpeed;
+                        lineAdd.MaxSpeed2 = obj.MaxSpeed;
+                    }
+                    if (itemSpeed.Position == SpeedProviderCons.Position.END)
+                    {
+                        lineAdd.Lat3 = obj.Lat;
+                        lineAdd.Lng3 = obj.Lng;
+                        lineAdd.MinSpeed3 = obj.MinSpeed;
+                        lineAdd.MaxSpeed3 = obj.MaxSpeed;
+                    }
+
+                    lineAdd.Position = obj.Position;
+
+                    listResult.Add(lineAdd);
+                    //lineAdd = item;
+                }
+
+               
             }
 
             return listResult;
         }
 
-        private async Task<string> WriteFileFromListUpd(List<SpeedProviderDbVm> listSpeedDb, string filePath)
+
+        private async Task<string> WriteFileFromListUpd3Point(List<SpeedProviderUpLoad3PointVm> listSpeedDb, string filePath)
         {
             if (!listSpeedDb.Any())
             {
@@ -286,11 +328,11 @@ namespace SpeedWebAPI.Services
 
             StreamWriter writerheader = new StreamWriter(filePath, false);
             //string header = SpeedProviderCons.HEADER_FILE_SPEED_LIMIT;
-            string header = SpeedProviderCons.HEADER_FILE_DOWLOAD_SPEED_LIMIT;
+            string header = SpeedProviderCons.HEADER_FILE_UPD_3_POINT;
             writerheader.Write(header);
             writerheader.Close();
 
-            foreach (SpeedProviderDbVm item in listSpeedDb)
+            foreach (SpeedProviderUpLoad3PointVm item in listSpeedDb)
             {
                 // Read old data
                 StreamReader reader = new StreamReader(filePath);
@@ -303,8 +345,13 @@ namespace SpeedWebAPI.Services
                 await writer.WriteLineAsync(readedData);
 
                 // write new data
-                string line = item.SegmentID.ToString() + "," + item.Lng.ToString() + "," + item.Lat.ToString()
-                     + "," + item.MinSpeed.ToString() + "," + item.MaxSpeed.ToString();
+                string line = item.SegmentID.ToString() + "," + item.Lng1.ToString() + "," + item.Lat1.ToString()
+                + "," + item.Lng2.ToString() + "," + item.Lat2.ToString()
+                + "," + item.Lng3.ToString() + "," + item.Lat3.ToString()
+                + "," + item.MinSpeed1.ToString() + "," + item.MaxSpeed1.ToString()
+                + "," + item.MinSpeed2.ToString() + "," + item.MaxSpeed2.ToString()
+                + "," + item.MinSpeed3.ToString() + "," + item.MaxSpeed3.ToString(); 
+
                 await writer.WriteAsync(line);
                 writer.Close();
             }
@@ -313,7 +360,6 @@ namespace SpeedWebAPI.Services
 
         }
 
-        #region Area for 3 Point
         private async Task<List<SpeedProviderUpLoadVm>> GetSpeedProviderFromUpload3Point(string filePath)
         {
             if (File.Exists(filePath))
@@ -341,18 +387,17 @@ namespace SpeedWebAPI.Services
                         lineS.SegmentID = Convert.ToInt64((linesUpload[(int)DataSpeedUpLoad3Point.ColSegmentID]).ToString());
                         lineS.Lat = Convert.ToDouble((linesUpload[(int)DataSpeedUpLoad3Point.ColLat1]).ToString());
                         lineS.Lng = Convert.ToDouble((linesUpload[(int)DataSpeedUpLoad3Point.ColLng1]).ToString());
-                        lineS.Position = "S";
-                        //lineAdd.Note = (linesUpload[(int)DataSpeedUpLoad.ColNote]).ToString();
+                        lineS.Position = SpeedProviderCons.Position.START;
 
                         lineM.SegmentID = Convert.ToInt64((linesUpload[(int)DataSpeedUpLoad3Point.ColSegmentID]).ToString());
                         lineM.Lat = Convert.ToDouble((linesUpload[(int)DataSpeedUpLoad3Point.ColLat2]).ToString());
                         lineM.Lng = Convert.ToDouble((linesUpload[(int)DataSpeedUpLoad3Point.ColLng2]).ToString());
-                        lineM.Position = "M";
+                        lineM.Position = SpeedProviderCons.Position.MID;
 
                         lineE.SegmentID = Convert.ToInt64((linesUpload[(int)DataSpeedUpLoad3Point.ColSegmentID]).ToString());
                         lineE.Lat = Convert.ToDouble((linesUpload[(int)DataSpeedUpLoad3Point.ColLat3]).ToString());
                         lineE.Lng = Convert.ToDouble((linesUpload[(int)DataSpeedUpLoad3Point.ColLng3]).ToString());
-                        lineE.Position = "E";
+                        lineE.Position = SpeedProviderCons.Position.END;
 
                         listUpload.Add(lineS);
                         listUpload.Add(lineM);
@@ -365,7 +410,6 @@ namespace SpeedWebAPI.Services
             }
             return new List<SpeedProviderUpLoadVm>();
         }
-        #endregion
 
 
         #endregion

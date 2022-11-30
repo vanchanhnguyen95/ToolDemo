@@ -9,5 +9,6 @@ namespace SpeedWebAPI.ViewModels
         public int? MinSpeed { get; set; } = 0;
         public int? MaxSpeed { get; set; } = 0;
         public string Note { get; set; }
+        public string Position { get; set; }
     }
 }
