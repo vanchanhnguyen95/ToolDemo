@@ -284,7 +284,8 @@ namespace SpeedWebAPI.Services
             }
 
             StreamWriter writerheader = new StreamWriter(filePath, false);
-            string header = SpeedProviderCons.HEADER_FILE_SPEED_SLIMIT;
+            //string header = SpeedProviderCons.HEADER_FILE_SPEED_LIMIT;
+            string header = SpeedProviderCons.HEADER_FILE_DOWLOAD_SPEED_LIMIT;
             writerheader.Write(header);
             writerheader.Close();
 
@@ -301,7 +302,7 @@ namespace SpeedWebAPI.Services
                 await writer.WriteLineAsync(readedData);
 
                 // write new data
-                string line = item.SegmentID.ToString() + "," + item.Lat.ToString() + "," + item.Lat.ToString()
+                string line = item.SegmentID.ToString() + "," + item.Lng.ToString() + "," + item.Lat.ToString()
                      + "," + item.MinSpeed.ToString() + "," + item.MaxSpeed.ToString();
                 await writer.WriteAsync(line);
                 writer.Close();
