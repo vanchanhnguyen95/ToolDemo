@@ -202,6 +202,12 @@ namespace SpeedWebAPI.Services
 
         private async Task<List<SpeedProviderUpLoad3PointVm>> GetSpeedProviderFromDb3Point(List<SpeedProviderUpLoadVm> listUpload)
         {
+            // Lấy ra danh sách chỉ chứa các SegmentID
+
+            // Duyệt danh sách chứa SegmentID
+            // Tìm kiếm trong Db để lấy dữ liệu 3 điểm đầu, cuối giữa
+            // Tạo line để export ra file txt
+
             List<SpeedProviderUpLoad3PointVm> listResult = new List<SpeedProviderUpLoad3PointVm>();
 
             if (!listUpload.Any())
@@ -210,107 +216,94 @@ namespace SpeedWebAPI.Services
             }
 
             SpeedProviderUpLoad3PointVm lineAdd;
-            SpeedProviderUpLoad3PointVm lineRemove;
             foreach (SpeedProviderUpLoadVm itemSpeed in listUpload)
             {
-                var obj = await Db.SpeedLimit3Points
-                    .Where(x => x.Lat == itemSpeed.Lat && x.Lng == itemSpeed.Lng && x.DeleteFlag == 0).AsNoTracking().FirstOrDefaultAsync();
+                // Lấy ra danh sách các điểm trong 1 line
+                List<SpeedLimit3Point> lstFind = await Db.SpeedLimit3Points.Where(x => x.SegmentID == itemSpeed.SegmentID).ToListAsync();
 
-                if (obj == null)
-                {
-                    continue;
-                }
 
-                SpeedProviderUpLoad3PointVm item = null;
-                if (listResult != null && listResult.Any())
-                {
-                    item = listResult.Where(x => x.SegmentID == itemSpeed.SegmentID).SingleOrDefault();
-                }    
+                //var obj = await Db.SpeedLimit3Points
+                //    .Where(x => x.Lat == itemSpeed.Lat && x.Lng == itemSpeed.Lng && x.DeleteFlag == 0).AsNoTracking().FirstOrDefaultAsync();
 
-                if(item == null)
-                {
-                    lineAdd = new SpeedProviderUpLoad3PointVm();
+                //if (obj == null)
+                //{
+                //    continue;
+                //}
 
-                    lineAdd.SegmentID = obj.SegmentID ?? 0;
+                //SpeedProviderUpLoad3PointVm item = null;
+                //if (listResult != null && listResult.Any())
+                //{
+                //    item = listResult.Where(x => x.SegmentID == itemSpeed.SegmentID).SingleOrDefault();
+                //}    
 
-                    if (itemSpeed.Position == SpeedProviderCons.Position.START)
-                    {
-                        lineAdd.Lat1 = obj.Lat;
-                        lineAdd.Lng1 = obj.Lng;
-                        lineAdd.MinSpeed1 = obj.MinSpeed;
-                        lineAdd.MaxSpeed1 = obj.MaxSpeed;
+                //if(item == null)
+                //{
+                //    lineAdd = new SpeedProviderUpLoad3PointVm();
 
-                    }
-                    if (itemSpeed.Position == SpeedProviderCons.Position.MID)
-                    {
-                        lineAdd.Lat2 = obj.Lat;
-                        lineAdd.Lng2 = obj.Lng;
-                        lineAdd.MinSpeed2 = obj.MinSpeed;
-                        lineAdd.MaxSpeed2 = obj.MaxSpeed;
-                    }
-                    if (itemSpeed.Position == SpeedProviderCons.Position.END)
-                    {
-                        lineAdd.Lat3 = obj.Lat;
-                        lineAdd.Lng3 = obj.Lng;
-                        lineAdd.MinSpeed3 = obj.MinSpeed;
-                        lineAdd.MaxSpeed3 = obj.MaxSpeed;
-                    }
+                //    lineAdd.SegmentID = obj.SegmentID ?? 0;
 
-                    lineAdd.Position = obj.Position;
-                    listResult.Add(lineAdd);
-                }
-                else
-                {
-                    // Remove item old
-                    lineAdd = new SpeedProviderUpLoad3PointVm();
-                    //lineRemove = new SpeedProviderUpLoad3PointVm();
+                //    if (itemSpeed.Position == SpeedProviderCons.Position.START)
+                //    {
+                //        lineAdd.Lat1 = obj.Lat;
+                //        lineAdd.Lng1 = obj.Lng;
+                //        lineAdd.MinSpeed1 = obj.MinSpeed;
+                //        lineAdd.MaxSpeed1 = obj.MaxSpeed;
 
-                    //lineRemove.SegmentID = obj.SegmentID ?? 0;
-                    //lineRemove.Lat1 = item.Lat1;
-                    //lineRemove.Lng1 = item.Lng1;
-                    //lineRemove.Lat2 = item.Lat2;
-                    //lineRemove.Lng2 = item.Lng2;
-                    //lineRemove.Lat3 = item.Lat3;
-                    //lineRemove.Lng3 = item.Lng3;
-                    //lineRemove.MinSpeed1 = item.MinSpeed1;
-                    //lineRemove.MaxSpeed1 = item.MaxSpeed1;
-                    //lineRemove.MinSpeed2 = item.MinSpeed2;
-                    //lineRemove.MaxSpeed2 = item.MaxSpeed2;
-                    //lineRemove.MinSpeed3 = item.MinSpeed3;
-                    //lineRemove.MaxSpeed3 = item.MinSpeed3;
-                    //lineRemove.Position = item.Position;
+                //    }
+                //    if (itemSpeed.Position == SpeedProviderCons.Position.MID)
+                //    {
+                //        lineAdd.Lat2 = obj.Lat;
+                //        lineAdd.Lng2 = obj.Lng;
+                //        lineAdd.MinSpeed2 = obj.MinSpeed;
+                //        lineAdd.MaxSpeed2 = obj.MaxSpeed;
+                //    }
+                //    if (itemSpeed.Position == SpeedProviderCons.Position.END)
+                //    {
+                //        lineAdd.Lat3 = obj.Lat;
+                //        lineAdd.Lng3 = obj.Lng;
+                //        lineAdd.MinSpeed3 = obj.MinSpeed;
+                //        lineAdd.MaxSpeed3 = obj.MaxSpeed;
+                //    }
 
-                    lineAdd = item;
-                    listResult.Remove(item);
-                    lineAdd.SegmentID = obj.SegmentID ?? 0;
-                    if (itemSpeed.Position == SpeedProviderCons.Position.START)
-                    {
-                        lineAdd.Lat1 = obj.Lat;
-                        lineAdd.Lng1 = obj.Lng;
-                        lineAdd.MinSpeed1 = obj.MinSpeed;
-                        lineAdd.MaxSpeed1 = obj.MaxSpeed;
+                //    lineAdd.Position = obj.Position;
+                //    listResult.Add(lineAdd);
+                //}
+                //else
+                //{
+                //    // Remove item old
+                //    lineAdd = new SpeedProviderUpLoad3PointVm();
 
-                    }
-                    if (itemSpeed.Position == SpeedProviderCons.Position.MID)
-                    {
-                        lineAdd.Lat2 = obj.Lat;
-                        lineAdd.Lng2 = obj.Lng;
-                        lineAdd.MinSpeed2 = obj.MinSpeed;
-                        lineAdd.MaxSpeed2 = obj.MaxSpeed;
-                    }
-                    if (itemSpeed.Position == SpeedProviderCons.Position.END)
-                    {
-                        lineAdd.Lat3 = obj.Lat;
-                        lineAdd.Lng3 = obj.Lng;
-                        lineAdd.MinSpeed3 = obj.MinSpeed;
-                        lineAdd.MaxSpeed3 = obj.MaxSpeed;
-                    }
+                //    lineAdd = item;
+                //    listResult.Remove(item);
+                //    lineAdd.SegmentID = obj.SegmentID ?? 0;
+                //    if (itemSpeed.Position == SpeedProviderCons.Position.START)
+                //    {
+                //        lineAdd.Lat1 = obj.Lat;
+                //        lineAdd.Lng1 = obj.Lng;
+                //        lineAdd.MinSpeed1 = obj.MinSpeed;
+                //        lineAdd.MaxSpeed1 = obj.MaxSpeed;
 
-                    lineAdd.Position = obj.Position;
+                //    }
+                //    if (itemSpeed.Position == SpeedProviderCons.Position.MID)
+                //    {
+                //        lineAdd.Lat2 = obj.Lat;
+                //        lineAdd.Lng2 = obj.Lng;
+                //        lineAdd.MinSpeed2 = obj.MinSpeed;
+                //        lineAdd.MaxSpeed2 = obj.MaxSpeed;
+                //    }
+                //    if (itemSpeed.Position == SpeedProviderCons.Position.END)
+                //    {
+                //        lineAdd.Lat3 = obj.Lat;
+                //        lineAdd.Lng3 = obj.Lng;
+                //        lineAdd.MinSpeed3 = obj.MinSpeed;
+                //        lineAdd.MaxSpeed3 = obj.MaxSpeed;
+                //    }
 
-                    listResult.Add(lineAdd);
-                    //lineAdd = item;
-                }
+                //    lineAdd.Position = obj.Position;
+
+                //    listResult.Add(lineAdd);
+                //    //lineAdd = item;
+                //}
 
                
             }
