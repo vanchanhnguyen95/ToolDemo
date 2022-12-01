@@ -45,5 +45,14 @@ namespace SpeedWebAPI.Controllers
             var data = await _speedLimitService.UpdateSpeedLimitPush(speedLimitParams);
             return Ok(data);
         }
+
+        [HttpGet]
+        [MapToApiVersion("1")]
+        [Route("GetSpeedCurrent")]
+        public async Task<IActionResult> GetSpeedCurrent(int? limit)
+        {
+            var data = await _speedLimitService.GetSpeedCurrent(limit);
+            return Ok(data);
+        }
     }
 }

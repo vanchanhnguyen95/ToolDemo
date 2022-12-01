@@ -35,6 +35,8 @@ namespace SpeedWebAPI.Services
         /// <param name="speedProviderUpLoad"></param>
         /// <returns></returns>
         Task<IResult<object>> UpdloadSpeedProvider(List<SpeedProviderUpLoadVm> speedProviderUpLoad);
+
+        Task<object> GetSpeedCurrent(int? limit);
     }
 
     #endregion
@@ -43,7 +45,56 @@ namespace SpeedWebAPI.Services
     {
         public SpeedLimitService(ApplicationDbContext db) : base(db)
         {
+        }       
+
+        public async Task<object> GetSpeedCurrent(int? limit)
+        {
+            try
+            {
+                if (limit == null || limit > 100)
+                    limit = 100;
+
+                var query = (from s in Db.SpeedLimits
+                             where s.DeleteFlag == 0 && s.PointError == false
+                             && s.UpdatedDate.Value.Date == DateTime.Now.Date
+                             && s.UpdatedDate.Value.Month == DateTime.Now.Month
+                             && s.UpdatedDate.Value.Year == DateTime.Now.Year
+                             select s).OrderBy(x => x.UpdateCount).Select(x
+                             => new SpeedLimit()
+                             {
+                                 Lat = x.Lat,
+                                 Lng = x.Lng,
+                                 ProviderType = x.ProviderType,
+                                 UpdatedDate = x.UpdatedDate
+                             });
+
+
+                // Nếu Update Date mà < 6 tháng thì không cho hiển thị ra
+                //DateTime UpdDateAllow = (DateTime)DateTime.Now.AddMonths(-6).Date;
+
+                //var lstRe = new List<SpeedProvider>();
+
+                //foreach (SpeedLimit item in query)
+                //{
+                //    if (item.UpdatedDate == null || (UpdDateAllow - item.UpdatedDate).Value.Days < 1)
+                //    {
+                //        lstRe.Add(new SpeedProvider() { Lat = item.Lat, Lng = item.Lng, ProviderType = item.ProviderType });
+                //    }
+                //}
+
+                string messTotal = @$"Có {query.Count()} " + "điểm đã được cập nhật vận tốc giới hạn";
+
+                var re = await query.Take(limit ?? 1000).ToListAsync();
+
+                //return Result<object>.Success(re, await query.CountAsync(), Message.SUCCESS);
+                return Result<object>.Success(re, await query.CountAsync(), messTotal);
+            }
+            catch (Exception ex)
+            {
+                return Result<object>.Error(ex.ToString());
+            }
         }
+
         public async Task<object> GetSpeedProviders(int? limit)
         {
             try

@@ -9,7 +9,7 @@ namespace SpeedWebAPI.ViewModels
         public double Lat2 { get; set; }
         public double Lng2 { get; set; }
         public double Lat3 { get; set; }
-        public double Lng3  { get; set; }
+        public double Lng3 { get; set; }
         public int? MinSpeed1 { get; set; } = 0;
         public int? MaxSpeed1 { get; set; } = 0;
         public int? MinSpeed2 { get; set; } = 0;
@@ -17,6 +17,6 @@ namespace SpeedWebAPI.ViewModels
         public int? MinSpeed3 { get; set; } = 0;
         public int? MaxSpeed3 { get; set; } = 0;
 
-        public string Position { get; set; }
+        //public string Position { get; set; }
     }
 }
