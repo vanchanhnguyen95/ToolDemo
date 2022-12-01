@@ -35,6 +35,8 @@ namespace SpeedWebAPI.Services
         /// <param name="speedProviderUpLoad"></param>
         /// <returns></returns>
         Task<IResult<object>> UpdloadSpeedProvider3Point(List<SpeedProviderUpLoadVm> speedProviderUpLoad);
+
+        Task<object> GetSpeedCurrent3Point(int? limit);
     }
 
     #endregion
@@ -44,6 +46,41 @@ namespace SpeedWebAPI.Services
         public SpeedLimit3PointService(ApplicationDbContext db) : base(db)
         {
         }
+
+        public async Task<object> GetSpeedCurrent3Point(int? limit)
+        {
+            try
+            {
+                if (limit == null || limit > 100)
+                    limit = 100;
+
+                var query = (from s in Db.SpeedLimit3Points
+                             where s.DeleteFlag == 0 && s.PointError == false
+                             && s.UpdatedDate.Value.Date == DateTime.Now.Date
+                             && s.UpdatedDate.Value.Month == DateTime.Now.Month
+                             && s.UpdatedDate.Value.Year == DateTime.Now.Year
+                             select s).OrderBy(x => x.UpdateCount).Select(x
+                             => new SpeedLimit()
+                             {
+                                 Lat = x.Lat,
+                                 Lng = x.Lng,
+                                 ProviderType = x.ProviderType,
+                                 UpdatedDate = x.UpdatedDate
+                             });
+
+
+                string messTotal = @$"Có {query.Count()} " + "điểm đã được cập nhật vận tốc giới hạn trong ngày " + $"{DateTime.Now.ToString("dd/MM/yyyy")}";
+
+                var re = query.AsQueryable();
+                //var re = await query.Take(limit ?? 1000).ToListAsync();
+                return Result<object>.Success(re, await query.CountAsync(), messTotal);
+            }
+            catch (Exception ex)
+            {
+                return Result<object>.Error(ex.ToString());
+            }
+        }
+
         public async Task<object> GetSpeedProviders3Point(int? limit)
         {
             try

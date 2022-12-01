@@ -82,12 +82,12 @@ namespace SpeedWebAPI.Services
                 //    }
                 //}
 
-                string messTotal = @$"Có {query.Count()} " + "điểm đã được cập nhật vận tốc giới hạn";
+                string messTotal = @$"Có {query.Count()} " + "điểm đã được cập nhật vận tốc giới hạn trong ngày " + $"{DateTime.Now.ToString("dd/MM/yyyy")}";
 
                 var re = await query.Take(limit ?? 1000).ToListAsync();
 
                 //return Result<object>.Success(re, await query.CountAsync(), Message.SUCCESS);
-                return Result<object>.Success(re, await query.CountAsync(), messTotal);
+                return Result<object>.Success(null, await query.CountAsync(), messTotal);
             }
             catch (Exception ex)
             {

@@ -242,9 +242,9 @@ namespace SpeedWebAPI.Services
 
                 // write new data
                 string line = item.SegmentID.ToString()
-                + "," + item.Lng1.ToString() + "," + item.Lat1.ToString()
-                + "," + item.Lng2.ToString() + "," + item.Lat2.ToString()
-                + "," + item.Lng3.ToString() + "," + item.Lat3.ToString()
+                //+ "," + item.Lng1.ToString() + "," + item.Lat1.ToString()
+                //+ "," + item.Lng2.ToString() + "," + item.Lat2.ToString()
+                //+ "," + item.Lng3.ToString() + "," + item.Lat3.ToString()
                 + "," + item.MinSpeed1.ToString() + "," + item.MaxSpeed1.ToString()
                 + "," + item.MinSpeed2.ToString() + "," + item.MaxSpeed2.ToString()
                 + "," + item.MinSpeed3.ToString() + "," + item.MaxSpeed3.ToString(); 
