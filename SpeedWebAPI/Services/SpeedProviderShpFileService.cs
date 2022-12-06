@@ -13,12 +13,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Aspose.Gis;
 using Catfood.Shapefile;
 
 namespace SpeedWebAPI.Services
 {
     #region interface
-    public interface ISpeedProviderFileService : IBaseService<SpeedLimit>
+    public interface ISpeedProviderShpFileService : IBaseService<SpeedLimit>
     {
         /// <summary>
         /// Update List Speed Provider
@@ -34,152 +35,64 @@ namespace SpeedWebAPI.Services
         /// <returns></returns>
         Task<IResultFile<object>> GetFileListSpeedFromFileUpd(IFormFile postedFile);
 
-        Task<IResultFile<object>> UpdSpeedProviderFromShpFile(string pathFile);
+
+        Task<IResultFile<object>> UpdSpeedProviderFromShpFile(IFormFile postedFile);
     }
     #endregion
 
-    public class SpeedProviderFileService : BaseService<SpeedLimit, ApplicationDbContext>, ISpeedProviderFileService
+    public class SpeedProviderShpFileService : BaseService<SpeedLimit, ApplicationDbContext>, ISpeedProviderShpFileService
     {
         private readonly ISpeedLimitService _speedLimitService;
         [Obsolete]
         private IHostingEnvironment _environment;
 
         [Obsolete]
-        public SpeedProviderFileService(ApplicationDbContext db, ISpeedLimitService speedLimitService, IHostingEnvironment environment) : base(db)
+        public SpeedProviderShpFileService(ApplicationDbContext db, ISpeedLimitService speedLimitService, IHostingEnvironment environment) : base(db)
         {
             _speedLimitService = speedLimitService;
             _environment = environment;
         }
 
-        public async Task<IResultFile<object>> UpdSpeedProviderFromShpFile(string pathFile)
+        public async Task<IResultFile<object>> UpdSpeedProviderFromShpFile(IFormFile postedFile)
         {
             try
             {
-                if (string.IsNullOrEmpty(pathFile))
-                {
-                    return ResultFile<object>.Error(pathFile, ErrMessage.NOT_FIND_UPD);
-                }
-
-                if (Path.GetExtension(pathFile) != ".shp")
+                if (Path.GetExtension(postedFile.FileName) != ".shp")
                 {
                     return ResultFile<object>.Error(string.Empty, ErrMessage.UPD_FILE_FORMAT_SHP);
                 }
 
-                List<SpeedProviderUpLoadVm> listSpeed = await GetSpeedProviderFromShpFile(pathFile);
+                string filePath = await GetLinkFileUpLoad(postedFile);
+
+                if (string.IsNullOrEmpty(filePath))
+                {
+                    // Delete file temp
+                    File.Delete(filePath);
+                    return ResultFile<object>.Error(filePath, ErrMessage.NOT_FIND_UPD);
+                }
+
+                List<SpeedProviderUpLoadVm> listSpeed = await GetSpeedProviderFromShpFile(filePath);
+
+                return ResultFile<object>.Success(null, filePath, Message.SUCCESS);
 
                 if (!listSpeed.Any() || listSpeed.Count() == 0)
                 {
                     // Delete file temp
-                    //File.Delete(pathFile);
-                    return ResultFile<object>.Error(string.Empty, ErrMessage.UPD_FILE_FORMAT_SHP);
+                    File.Delete(filePath);
+                    return ResultFile<object>.Error(string.Empty, ErrMessage.GET_DATA_FILE_TXT);
                 }
 
-                //if (listSpeed.Any() && listSpeed.Count() > 1000)
-                //{
-                //    // Delete file temp
-                //    //File.Delete(pathFile);
-                //    return ResultFile<object>.Error(string.Empty, ErrMessage.UPD_NUM_LINE_SHP);
-                //}
-
-                //await _speedLimitService.up(listSpeed);
+                await _speedLimitService.UpdloadSpeedProvider(listSpeed);
 
                 // Delete file temp
-                //File.Delete(pathFile);
-                return ResultFile<object>.Success(null, pathFile, Message.SUCCESS);
+                File.Delete(filePath);
+
+                return ResultFile<object>.Success(null, filePath, Message.SUCCESS);
             }
             catch (Exception ex)
             {
                 return ResultFile<object>.Error(ex.ToString());
             }
-        }
-
-        private async Task<List<SpeedProviderUpLoadVm>> GetSpeedProviderFromShpFile(string pathFile)
-        {
-            List<SpeedProviderUpLoadVm> lst = new List<SpeedProviderUpLoadVm>();
-
-            // construct shapefile with the path to the .shp file
-            using (Shapefile shapefile = new Shapefile(pathFile))
-            {
-                // enumerate all shapesx: trường hợp này dữ liệu đầu vào có tất cả shape.Type= Polyline
-                foreach (Shape shape in shapefile)
-                {
-                    if (shape.Type != ShapeType.PolyLine)
-                        continue;
-
-                    long segmenId = Convert.ToInt64(shape.GetMetadata("segmentId"));
-                    foreach (PointD[] part in (shape as ShapePolyLine).Parts)
-                    {
-                        // Thêm điểm đầu
-                        lst.Add(new SpeedProviderUpLoadVm()
-                        {
-                            Lat = part[0].Y,
-                            Lng = part[0].X,
-                            Position = SpeedProviderCons.Position.START,
-                            ProviderType = 1,
-                            SegmentID = segmenId
-                        });
-                        // Thêm điểm cuối
-                        lst.Add(new SpeedProviderUpLoadVm()
-                        {
-                            Lat = part[1].Y,
-                            Lng = part[1].X,
-                            Position = SpeedProviderCons.Position.END,
-                            ProviderType = 1,
-                            SegmentID = segmenId
-                        });
-                        segmenId = 0;
-                    }
-                }
-
-            }
-
-            return lst;
-        }
-
-        private async Task<List<SpeedProviderUpLoadVm>> GetSpeedProviderFromShpFileAspose(string pathFile)
-        {
-            List<SpeedProviderUpLoadVm> lst = null;
-            //var layer1 = Drivers.Shapefile.OpenLayer(@"E:\Data_shp\QL1ATest100\100Line.shp");
-            //var layer1 = Aspose.Gis.Drivers.Shapefile.OpenLayer(pathFile);
-            int cnt = 500;
-            lst = new List<SpeedProviderUpLoadVm>();
-
-            while (cnt > 0)
-            {
-                // Đọc thông tin từ Point
-                //using (var layer = Drivers.Shapefile.OpenLayer(@"E:\Data_shp\QL1ATest100\100Line.shp"))
-                using (var layer = Aspose.Gis.Drivers.Shapefile.OpenLayer(pathFile))
-                {
-                    //int count = layer.Count;
-                    // cho biến chạy đến 50 vì lince đang cho lưu 100 dòng
-                    for (int j = 0; j < 50; j++)
-                    {
-                        // Lấy dữ liệu thông tin Field SegmentID
-                        Aspose.Gis.Feature feature = layer[j];
-                        long segmentID = feature.GetValue<long>("SegmentID");
-
-                        // Duyệt từng dòng line
-                        var line = layer[j].Geometry as Aspose.Gis.Geometries.LineString;
-
-                        // Thêm tọa độ điểm đầu
-                        lst.Add(new SpeedProviderUpLoadVm()
-                        { Lat = line.StartPoint.Y, Lng = line.StartPoint.X, SegmentID = segmentID,
-                            ProviderType = 1, Position = SpeedProviderCons.Position.START } );
-                        // Thêm tọa độ điểm cuối
-                        lst.Add(new SpeedProviderUpLoadVm()
-                        { Lat = line.EndPoint.Y, Lng = line.EndPoint.X, SegmentID = segmentID,
-                            ProviderType = 1, Position = SpeedProviderCons.Position.END });
-
-                        // Tính khoảng cách
-                        //double length = line.GetLength();
-                    }
-
-                    cnt -= 50;
-
-                }
-            }
-
-            return lst;
         }
 
         public async Task<IResultFile<object>> UpdateListSpeedProvider(IFormFile postedFile)
@@ -344,6 +257,87 @@ namespace SpeedWebAPI.Services
 
         }
 
+        private async Task<List<SpeedProviderUpLoadVm>> GetSpeedProviderFromShpFile(string pathFile)
+        {
+            List<SpeedProviderUpLoadVm> lst = new List<SpeedProviderUpLoadVm>();
+
+            // construct shapefile with the path to the .shp file
+            using (Shapefile shapefile = new Shapefile(pathFile))
+            {
+                // enumerate all shapesx: trường hợp này dữ liệu đầu vào có tất cả shape.Type= Polyline
+                foreach (Shape shape in shapefile)
+                {
+                    if (shape.Type != ShapeType.PolyLine)
+                        continue;
+
+                    long segmenId = Convert.ToInt64(shape.GetMetadata("segmentId"));
+                    foreach (PointD[] part in (shape as ShapePolyLine).Parts)
+                    {
+                        // Thêm điểm đầu
+                        lst.Add(new SpeedProviderUpLoadVm()
+                        { Lat = part[0].Y, Lng = part[0].X, Position = SpeedProviderCons.Position.START,
+                            ProviderType = 1, SegmentID = segmenId });
+                        // Thêm điểm cuối
+                        lst.Add(new SpeedProviderUpLoadVm()
+                        { Lat = part[1].Y, Lng = part[1].X, Position = SpeedProviderCons.Position.END,
+                            ProviderType = 1, SegmentID = segmenId });
+                        segmenId = 0;
+                    }
+                }
+
+            }
+
+            return lst;
+        }
+
+        private async Task<List<SpeedProviderUpLoadVm>> GetSpeedProviderFromShpFileAspose(string filePath)
+        {
+            List<SpeedProviderUpLoadVm> lst = null;
+            //var layer1 = Drivers.Shapefile.OpenLayer(@"E:\Data_shp\QL1ATest100\100Line.shp");
+            var layer1 = Drivers.Shapefile.OpenLayer(@"E:\Data_shp\QL1A\1A.shp");
+            int cnt = 500;
+            lst = new List<SpeedProviderUpLoadVm>();
+
+            while (cnt > 0)
+            {
+                // Đọc thông tin từ Point
+                //using (var layer = Drivers.Shapefile.OpenLayer(@"E:\Data_shp\QL1ATest100\100Line.shp"))
+                using (var layer = Drivers.Shapefile.OpenLayer(@"E:\Data_shp\QL1A\1A.shp"))
+                {
+                    //int count = layer.Count;
+                    for (int j = 0; j < 50; j++)
+                    {
+                        // Lấy dữ liệu thông tin Field SegmentID
+                        Feature feature = layer[j];
+                        long segmentID = feature.GetValue<long>("SegmentID");
+
+                        // Duyệt từng dòng line
+                        var line = layer[j].Geometry as Aspose.Gis.Geometries.LineString;
+
+                        // Thêm tọa độ điểm đầu
+                        lst.Add(new SpeedProviderUpLoadVm()
+                        { Lat = line.StartPoint.Y, Lng = line.StartPoint.X, SegmentID = segmentID, Position = SpeedProviderCons.Position.START }
+                        );
+                        // Thêm tọa độ điểm cuối
+                        lst.Add(new SpeedProviderUpLoadVm()
+                        { Lat = line.EndPoint.Y, Lng = line.EndPoint.X, SegmentID = segmentID, Position = SpeedProviderCons.Position.END }
+                        );
+
+
+                        // Tính khoảng cách
+                        //double length = line.GetLength();
+
+                    }
+
+                    cnt -= 50;
+
+                }
+            }
+
+            return lst;
+        }
+
+
         private async Task<List<SpeedProviderUpLoadVm>> GetSpeedProviderFromUpload(string filePath)
         {
             if (File.Exists(filePath))
@@ -475,18 +469,18 @@ namespace SpeedWebAPI.Services
                         lineS.SegmentID = Convert.ToInt64((linesUpload[(int)DataSpeedUpLoad3Point.ColSegmentID]).ToString());
                         lineS.Lat = Convert.ToDouble((linesUpload[(int)DataSpeedUpLoad3Point.ColLat1]).ToString());
                         lineS.Lng = Convert.ToDouble((linesUpload[(int)DataSpeedUpLoad3Point.ColLng1]).ToString());
-                        lineS.Position = "S";
+                        lineS.Position = SpeedProviderCons.Position.START;
                         //lineAdd.Note = (linesUpload[(int)DataSpeedUpLoad.ColNote]).ToString();
 
                         lineM.SegmentID = Convert.ToInt64((linesUpload[(int)DataSpeedUpLoad3Point.ColSegmentID]).ToString());
                         lineM.Lat = Convert.ToDouble((linesUpload[(int)DataSpeedUpLoad3Point.ColLat2]).ToString());
                         lineM.Lng = Convert.ToDouble((linesUpload[(int)DataSpeedUpLoad3Point.ColLng2]).ToString());
-                        lineM.Position = "M";
+                        lineM.Position = SpeedProviderCons.Position.MID;
 
                         lineE.SegmentID = Convert.ToInt64((linesUpload[(int)DataSpeedUpLoad3Point.ColSegmentID]).ToString());
                         lineE.Lat = Convert.ToDouble((linesUpload[(int)DataSpeedUpLoad3Point.ColLat3]).ToString());
                         lineE.Lng = Convert.ToDouble((linesUpload[(int)DataSpeedUpLoad3Point.ColLng3]).ToString());
-                        lineE.Position = "E";
+                        lineE.Position = SpeedProviderCons.Position.END;
 
                         listUpload.Add(lineS);
                         listUpload.Add(lineM);

@@ -50,6 +50,10 @@ namespace SpeedWebAPI.Migrations
                     b.Property<bool?>("PointError")
                         .HasColumnType("bit");
 
+                    b.Property<string>("Position")
+                        .HasMaxLength(1)
+                        .HasColumnType("nvarchar(1)");
+
                     b.Property<long?>("SegmentID")
                         .HasColumnType("bigint");
 

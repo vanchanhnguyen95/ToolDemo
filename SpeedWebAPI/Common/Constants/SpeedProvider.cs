@@ -13,6 +13,7 @@
             public const string START = "S";// Start Point
             public const string MID = "M";// Mid Point
             public const string END = "E";// End Point
+            public const string ORTHER = "0";// Orther Point
         }
     }
 }

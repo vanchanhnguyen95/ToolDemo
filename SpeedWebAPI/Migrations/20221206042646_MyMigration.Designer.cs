@@ -10,7 +10,7 @@ using SpeedWebAPI.Infrastructure;
 namespace SpeedWebAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20221130104926_MyMigration")]
+    [Migration("20221206042646_MyMigration")]
     partial class MyMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -51,6 +51,10 @@ namespace SpeedWebAPI.Migrations
 
                     b.Property<bool?>("PointError")
                         .HasColumnType("bit");
+
+                    b.Property<string>("Position")
+                        .HasMaxLength(1)
+                        .HasColumnType("nvarchar(1)");
 
                     b.Property<long?>("SegmentID")
                         .HasColumnType("bigint");

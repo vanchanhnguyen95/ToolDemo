@@ -9,10 +9,10 @@ namespace SpeedWebAPI.Models
     {
         [Key]
         [Column(Order = 1)]
-        public double Lat { get; set; }
+        public double Lat { get; set; }// Y
         [Key]
         [Column(Order = 2)]
-        public double Lng { get; set; }
+        public double Lng { get; set; }// X
         public int? MinSpeed { get; set; } = 0;
         public int? MaxSpeed { get; set; } = 0;
         [MaxLength(1)]

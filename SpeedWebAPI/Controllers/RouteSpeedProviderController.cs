@@ -30,8 +30,8 @@ namespace SpeedWebAPI.Controllers
         [Route("Get")]
         public async Task<IActionResult> Get(int? limit)
         {
-            //var data = await _speedLimitService.GetSpeedProviders(limit);
-            var data = await _speedLimit3PointService.GetSpeedProviders3Point(limit);
+            var data = await _speedLimitService.GetSpeedProviders(limit);
+            //var data = await _speedLimit3PointService.GetSpeedProviders3Point(limit);
             return Ok(data);
         }
 
@@ -45,8 +45,8 @@ namespace SpeedWebAPI.Controllers
         [Route("Push")]
         public async Task<IActionResult> Push([FromBody] SpeedLimitParams speedLimitParams)
         {
-            //var data = await _speedLimitService.UpdateSpeedLimitPush(speedLimitParams);
-            var data = await _speedLimit3PointService.UpdateSpeedLimitPush3Point(speedLimitParams);
+            var data = await _speedLimitService.UpdateSpeedLimitPush(speedLimitParams);
+            //var data = await _speedLimit3PointService.UpdateSpeedLimitPush3Point(speedLimitParams);
             return Ok(data);
         }
 
@@ -55,8 +55,8 @@ namespace SpeedWebAPI.Controllers
         [Route("GetSpeedCurrent")]
         public async Task<IActionResult> GetSpeedCurrent(int? limit)
         {
-            //var data = await _speedLimitService.GetSpeedCurrent(limit);
-            var data = await _speedLimit3PointService.GetSpeedCurrent3Point(limit);
+            var data = await _speedLimitService.GetSpeedCurrent(limit);
+            //var data = await _speedLimit3PointService.GetSpeedCurrent3Point(limit);
             return Ok(data);
         }
     }

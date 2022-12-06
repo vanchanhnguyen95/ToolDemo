@@ -197,20 +197,6 @@ namespace SpeedWebAPI.Services
             }
 
             return Result<object>.Success(new SpeedProviderUpLoadVm(), 0, Message.SUCCESS);
-
-            //try
-            //{
-            //    foreach (SpeedProviderUpLoadVm item in speedProviderUpLoad)
-            //    {
-            //        await UpdLoadSpeedProvider(item);
-            //    }
-
-            //    return Result<object>.Success(new SpeedProviderUpLoadVm(), 0, Message.SUCCESS);
-            //}
-            //catch (Exception ex)
-            //{
-            //    return Result<object>.Error(ex.ToString());
-            //}
         }
 
         #region private method
@@ -234,7 +220,7 @@ namespace SpeedWebAPI.Services
                 {
                     obj.MinSpeed = speedLimit.MinSpeed;
                     obj.MaxSpeed = speedLimit.MaxSpeed;
-                    obj.PointError = false;
+                    obj.PointError = speedLimit.PointError ?? false;
                     obj.UpdateCount++;
                     obj.UpdatedDate = DateTime.Now;
                     obj.UpdatedBy = $"Upd numbers {obj.UpdateCount?.ToString()}";
@@ -250,7 +236,7 @@ namespace SpeedWebAPI.Services
                     obj.DeleteFlag = 0;
                     obj.CreatedDate = DateTime.Now;
                     obj.UpdateCount = 0;
-                    obj.PointError = speedLimit.PointError;
+                    obj.PointError = false;
                     Db.SpeedLimits.Add(obj);
                 }
 
@@ -274,7 +260,8 @@ namespace SpeedWebAPI.Services
             try
             {
                 var obj = await Db.SpeedLimits
-               .Where(x => x.Lat == speedProvider.Lat && x.Lng == speedProvider.Lng).AsNoTracking().FirstOrDefaultAsync();
+               .Where(x => x.Lat == speedProvider.Lat && x.Lng == speedProvider.Lng
+               && x.ProviderType == speedProvider.ProviderType).AsNoTracking().FirstOrDefaultAsync();
 
                 // Đã có dữ liệu trong database thì bỏ qua luôn
                 if (obj != null)
@@ -284,8 +271,7 @@ namespace SpeedWebAPI.Services
                 obj.Lat = speedProvider.Lat;
                 obj.Lng = speedProvider.Lng;
                 obj.SegmentID = speedProvider.SegmentID;
-                //obj.Note = speedProvider.Note;
-                obj.ProviderType = 1;
+                obj.ProviderType = 1;// Đang chỉ có dữ liệu từ Navitel
                 obj.DeleteFlag = 0;
                 obj.CreatedDate = DateTime.Now;
                 obj.CreatedBy = "UploadFile";

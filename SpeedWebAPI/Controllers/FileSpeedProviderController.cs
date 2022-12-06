@@ -62,6 +62,18 @@ namespace SpeedWebAPI.Controllers
             return File(bytes, contentType, Path.GetFileName(result.FilePath));
         }
 
+        [HttpPost]
+        [MapToApiVersion("1")]
+        [Route("UploadPathShpFile")]
+        public async Task<IActionResult> UploadPathShpFile(string pathFile)
+        {
+            if (string.IsNullOrEmpty(pathFile))
+                return Ok(Common.Models.ResultFile<object>.Error(pathFile, Common.Constants.ErrMessage.NOT_FIND_UPD));
+
+            var result = await _speedProviderService.UpdSpeedProviderFromShpFile(pathFile.Trim());
+            return Ok(result);
+        }
+
     }
 
 }
