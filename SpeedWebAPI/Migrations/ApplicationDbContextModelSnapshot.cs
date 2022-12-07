@@ -52,7 +52,7 @@ namespace SpeedWebAPI.Migrations
 
                     b.Property<string>("Position")
                         .HasMaxLength(1)
-                        .HasColumnType("nvarchar(1)");
+                        .HasColumnType("varchar(1)");
 
                     b.Property<long?>("SegmentID")
                         .HasColumnType("bigint");
@@ -105,7 +105,7 @@ namespace SpeedWebAPI.Migrations
 
                     b.Property<string>("Position")
                         .HasMaxLength(1)
-                        .HasColumnType("nvarchar(1)");
+                        .HasColumnType("varchar(1)");
 
                     b.Property<long?>("SegmentID")
                         .HasColumnType("bigint");

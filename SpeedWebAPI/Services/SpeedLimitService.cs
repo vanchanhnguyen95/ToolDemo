@@ -155,39 +155,7 @@ namespace SpeedWebAPI.Services
 
             return Result<object>.Success(speedLimitParams);
 
-            //try
-            //{
-            //    if(speedLimitParams.data.Any())
-            //    {
-            //        foreach (SpeedLimitPush item in speedLimitParams.data)
-            //        {
-            //            await UpdateSpeedLimitPush(item);
-            //        }
-            //    }
-            //    return Result<object>.Success(speedLimitParams);
-            //}
-            //catch (Exception ex)
-            //{
-            //    return Result<object>.Error(ex.ToString());
-            //}
         }
-
-        //public async Task<IResult<object>> UpdloadSpeedProvider(List<SpeedProviderUpLoadVm> speedProviderUpLoad)
-        //{
-        //    try
-        //    {
-        //        foreach (SpeedProviderUpLoadVm item in speedProviderUpLoad)
-        //        {
-        //            await UpdLoadSpeedProvider(item);
-        //        }
-
-        //        return Result<object>.Success(new SpeedProviderUpLoadVm(), 0, Message.SUCCESS);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return Result<object>.Error(ex.ToString());
-        //    }
-        //}
 
         public async Task<IResult<object>> UpdloadSpeedProvider(List<SpeedProviderUpLoadVm> speedProviderUpLoad)
         {

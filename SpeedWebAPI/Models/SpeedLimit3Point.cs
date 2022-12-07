@@ -20,6 +20,7 @@ namespace SpeedWebAPI.Models
         public bool? PointError { get; set; } = false;//True: Tọa độ cung cấp bị lỗi, False: Tọa độ cung cấp ko bị lỗi
         public long? SegmentID { get; set; }
         [MaxLength(1)]
+        [Column(TypeName = "varchar(1)")]
         public string Position { get; set; }
     }
 }

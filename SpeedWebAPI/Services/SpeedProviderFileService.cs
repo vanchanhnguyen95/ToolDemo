@@ -325,8 +325,8 @@ namespace SpeedWebAPI.Services
 
                 var oldfileName = postedFile.FileName.Replace(Path.GetExtension(postedFile.FileName), "");
 
-                string fileName = oldfileName + "_" + DateTime.Now.Year.ToString() + DateTime.Now.Month.ToString() + DateTime.Now.Day.ToString()
-                                + DateTime.Now.Hour.ToString() + DateTime.Now.Minute.ToString() + DateTime.Now.Second.ToString()
+                string fileName = oldfileName + "_" + DateTime.Now.Year + DateTime.Now.Month + DateTime.Now.Day
+                                + DateTime.Now.Hour + DateTime.Now.Minute + DateTime.Now.Second
                                 + Path.GetExtension(postedFile.FileName);
 
                 //Save the File.
@@ -364,10 +364,10 @@ namespace SpeedWebAPI.Services
                         if (count < 2) continue; // Bỏ qua dòng header: Tên cột
 
                         // Lấy dữ liệu
-                        lineAdd.SegmentID = Convert.ToInt64((linesUpload[(int)DataSpeedUpLoad.ColSegmentID]).ToString());
-                        lineAdd.Lat = Convert.ToDouble((linesUpload[(int)DataSpeedUpLoad.ColLat]).ToString());
-                        lineAdd.Lng = Convert.ToDouble((linesUpload[(int)DataSpeedUpLoad.ColLng]).ToString());
-                        //lineAdd.Note = (linesUpload[(int)DataSpeedUpLoad.ColNote]).ToString();
+                        lineAdd.SegmentID = Convert.ToInt64((linesUpload[(int)DataSpeedUpLoad.ColSegmentID]));
+                        lineAdd.Lat = Convert.ToDouble(linesUpload[(int)DataSpeedUpLoad.ColLat]);
+                        lineAdd.Lng = Convert.ToDouble(linesUpload[(int)DataSpeedUpLoad.ColLng]);
+                        //lineAdd.Note = (linesUpload[(int)DataSpeedUpLoad.ColNote]);
                         listUpload.Add(lineAdd);
                     }
                     file.Close();
@@ -437,8 +437,8 @@ namespace SpeedWebAPI.Services
                 await writer.WriteLineAsync(readedData);
 
                 // write new data
-                string line = item.SegmentID.ToString() + "," + item.Lng.ToString() + "," + item.Lat.ToString()
-                     + "," + item.MinSpeed.ToString() + "," + item.MaxSpeed.ToString();
+                string line = item.SegmentID + "," + item.Lng + "," + item.Lat
+                     + "," + item.MinSpeed + "," + item.MaxSpeed;
                 await writer.WriteAsync(line);
                 writer.Close();
             }
@@ -447,59 +447,7 @@ namespace SpeedWebAPI.Services
 
         }
 
-        #region Area for 3 Point
-        private async Task<List<SpeedProviderUpLoadVm>> GetSpeedProviderFromUpload3Point(string filePath)
-        {
-            if (File.Exists(filePath))
-            {
-                // Read file using StreamReader. Reads file line by line  
-                using (StreamReader file = new StreamReader(filePath))
-                {
-                    string ln;
-                    int count = 0;
-                    List<SpeedProviderUpLoadVm> listUpload = new List<SpeedProviderUpLoadVm>();
-                    SpeedProviderUpLoadVm lineS;
-                    SpeedProviderUpLoadVm lineM;
-                    SpeedProviderUpLoadVm lineE;
-                    while ((ln = await file.ReadLineAsync()) != null)
-                    {
-                        count++;
-                        lineS = new SpeedProviderUpLoadVm();
-                        lineM = new SpeedProviderUpLoadVm();
-                        lineE = new SpeedProviderUpLoadVm();
-                        List<string> linesUpload = ln.Split(',').ToList();
-
-                        if (count < 2) continue; // Bỏ qua dòng header: Tên cột
-
-                        // Lấy dữ liệu
-                        lineS.SegmentID = Convert.ToInt64((linesUpload[(int)DataSpeedUpLoad3Point.ColSegmentID]).ToString());
-                        lineS.Lat = Convert.ToDouble((linesUpload[(int)DataSpeedUpLoad3Point.ColLat1]).ToString());
-                        lineS.Lng = Convert.ToDouble((linesUpload[(int)DataSpeedUpLoad3Point.ColLng1]).ToString());
-                        lineS.Position = "S";
-                        //lineAdd.Note = (linesUpload[(int)DataSpeedUpLoad.ColNote]).ToString();
-
-                        lineM.SegmentID = Convert.ToInt64((linesUpload[(int)DataSpeedUpLoad3Point.ColSegmentID]).ToString());
-                        lineM.Lat = Convert.ToDouble((linesUpload[(int)DataSpeedUpLoad3Point.ColLat2]).ToString());
-                        lineM.Lng = Convert.ToDouble((linesUpload[(int)DataSpeedUpLoad3Point.ColLng2]).ToString());
-                        lineM.Position = "M";
-
-                        lineE.SegmentID = Convert.ToInt64((linesUpload[(int)DataSpeedUpLoad3Point.ColSegmentID]).ToString());
-                        lineE.Lat = Convert.ToDouble((linesUpload[(int)DataSpeedUpLoad3Point.ColLat3]).ToString());
-                        lineE.Lng = Convert.ToDouble((linesUpload[(int)DataSpeedUpLoad3Point.ColLng3]).ToString());
-                        lineE.Position = "E";
-
-                        listUpload.Add(lineS);
-                        listUpload.Add(lineM);
-                        listUpload.Add(lineE);
-                    }
-                    file.Close();
-
-                    return listUpload;
-                }
-            }
-            return new List<SpeedProviderUpLoadVm>();
-        }
-        #endregion
+       
 
 
         #endregion

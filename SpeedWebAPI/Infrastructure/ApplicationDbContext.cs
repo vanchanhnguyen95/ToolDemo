@@ -22,7 +22,7 @@ namespace SpeedWebAPI.Infrastructure
                 u.ProviderType
             });
             //modelBuilder.Entity<SpeedLimit>().Property(x => x.Lat).HasPrecision(10, 8);
-            //modelBuilder.Entity<SpeedLimit>().Property(x => x.Lng).HasPrecision(10, 8);
+            //modelBuilder.Entity<SpeedLimit>().Property(x => x.Lng).HasPrecision(11, 8);
 
             modelBuilder.Entity<SpeedLimit3Point>().HasKey(u => new
             {
@@ -31,7 +31,7 @@ namespace SpeedWebAPI.Infrastructure
                 u.ProviderType
             });
             //modelBuilder.Entity<SpeedLimit3Point>().Property(x => x.Lat).HasPrecision(10, 8);
-            //modelBuilder.Entity<SpeedLimit3Point>().Property(x => x.Lng).HasPrecision(10, 8);
+            //modelBuilder.Entity<SpeedLimit3Point>().Property(x => x.Lng).HasPrecision(11, 8);
         }
     }
 }

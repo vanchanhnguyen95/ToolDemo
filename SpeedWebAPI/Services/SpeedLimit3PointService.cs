@@ -62,8 +62,8 @@ namespace SpeedWebAPI.Services
                              select s).OrderBy(x => x.UpdateCount).Select(x
                              => new SpeedLimit()
                              {
-                                 Lat = x.Lat,
-                                 Lng = x.Lng,
+                                 //Lat = x.Lat,
+                                 //Lng = x.Lng,
                                  ProviderType = x.ProviderType,
                                  UpdatedDate = x.UpdatedDate
                              });
@@ -92,8 +92,8 @@ namespace SpeedWebAPI.Services
                              select s).OrderBy(x => x.UpdateCount).Select(x
                              => new SpeedLimit()
                              {
-                                 Lat = x.Lat,
-                                 Lng = x.Lng,
+                                 //Lat = x.Lat,
+                                 //Lng = x.Lng,
                                  ProviderType = x.ProviderType,
                                  UpdatedDate = x.UpdatedDate
                              });
@@ -156,9 +156,11 @@ namespace SpeedWebAPI.Services
             try
             {
                 var obj = await Db.SpeedLimit3Points
-                .Where(x => x.Lat == speedLimit.Lat
-                && x.Lng == speedLimit.Lng
-                && x.ProviderType == speedLimit.ProviderType
+                .Where(
+                x =>
+                //    => x.Lat == speedLimit.Lat
+                //&& x.Lng == speedLimit.Lng
+                x.ProviderType == speedLimit.ProviderType
                 && x.PointError == false).AsNoTracking().FirstOrDefaultAsync();
 
                 if (obj != null)
@@ -175,8 +177,8 @@ namespace SpeedWebAPI.Services
                 else
                 {
                     obj = new SpeedLimit3Point();
-                    obj.Lat = speedLimit.Lat;
-                    obj.Lng = speedLimit.Lng;
+                    //obj.Lat = speedLimit.Lat;
+                    //obj.Lng = speedLimit.Lng;
                     obj.ProviderType = 1;
                     obj.DeleteFlag = 0;
                     obj.CreatedDate = DateTime.Now;
@@ -204,16 +206,17 @@ namespace SpeedWebAPI.Services
         {
             try
             {
-                var obj = await Db.SpeedLimit3Points
-               .Where(x => x.Lat == speedProvider.Lat && x.Lng == speedProvider.Lng).AsNoTracking().FirstOrDefaultAsync();
+                var obj = new SpeedLimit3Point();
+                //     = await Db.SpeedLimit3Points
+                //.Where(x => x.Lat == speedProvider.Lat && x.Lng == speedProvider.Lng).AsNoTracking().FirstOrDefaultAsync();
 
                 // Đã có dữ liệu trong database thì bỏ qua luôn
                 if (obj != null)
                     return Result<object>.Success(obj);
 
                 obj = new SpeedLimit3Point();
-                obj.Lat = speedProvider.Lat;
-                obj.Lng = speedProvider.Lng;
+                //obj.Lat = speedProvider.Lat;
+                //obj.Lng = speedProvider.Lng;
                 obj.SegmentID = speedProvider.SegmentID;
                 //obj.Note = speedProvider.Note;
                 obj.ProviderType = 1;
