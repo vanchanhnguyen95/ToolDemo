@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.33027.164
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReadSpeedShpFile", "ReadSpeedShpFile\ReadSpeedShpFile.csproj", "{5BCF84F4-8220-41D4-BD73-7FFE6C4B7899}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5BCF84F4-8220-41D4-BD73-7FFE6C4B7899}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5BCF84F4-8220-41D4-BD73-7FFE6C4B7899}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5BCF84F4-8220-41D4-BD73-7FFE6C4B7899}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5BCF84F4-8220-41D4-BD73-7FFE6C4B7899}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {5F3B8EB4-1B8D-485A-B2D7-50304348A16C}
+	EndGlobalSection
+EndGlobal
