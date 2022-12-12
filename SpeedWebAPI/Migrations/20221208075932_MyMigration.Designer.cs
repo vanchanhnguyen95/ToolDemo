@@ -10,7 +10,7 @@ using SpeedWebAPI.Infrastructure;
 namespace SpeedWebAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20221207013903_MyMigration")]
+    [Migration("20221208075932_MyMigration")]
     partial class MyMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -33,6 +33,10 @@ namespace SpeedWebAPI.Migrations
                         .HasMaxLength(1)
                         .HasColumnType("int");
 
+                    b.Property<string>("Position")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
                     b.Property<string>("CreatedBy")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
@@ -52,10 +56,6 @@ namespace SpeedWebAPI.Migrations
                     b.Property<bool?>("PointError")
                         .HasColumnType("bit");
 
-                    b.Property<string>("Position")
-                        .HasMaxLength(1)
-                        .HasColumnType("varchar(1)");
-
                     b.Property<long?>("SegmentID")
                         .HasColumnType("bigint");
 
@@ -69,62 +69,9 @@ namespace SpeedWebAPI.Migrations
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("datetime2");
 
-                    b.HasKey("Lat", "Lng", "ProviderType");
+                    b.HasKey("Lat", "Lng", "ProviderType", "Position");
 
                     b.ToTable("SpeedLimit");
-                });
-
-            modelBuilder.Entity("SpeedWebAPI.Models.SpeedLimit3Point", b =>
-                {
-                    b.Property<double>("Lat")
-                        .HasColumnType("float");
-
-                    b.Property<double>("Lng")
-                        .HasColumnType("float");
-
-                    b.Property<int?>("ProviderType")
-                        .HasMaxLength(1)
-                        .HasColumnType("int");
-
-                    b.Property<string>("CreatedBy")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<DateTime?>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("DeleteFlag")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("MaxSpeed")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("MinSpeed")
-                        .HasColumnType("int");
-
-                    b.Property<bool?>("PointError")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Position")
-                        .HasMaxLength(1)
-                        .HasColumnType("varchar(1)");
-
-                    b.Property<long?>("SegmentID")
-                        .HasColumnType("bigint");
-
-                    b.Property<int?>("UpdateCount")
-                        .HasColumnType("int");
-
-                    b.Property<string>("UpdatedBy")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Lat", "Lng", "ProviderType");
-
-                    b.ToTable("SpeedLimit3Point");
                 });
 #pragma warning restore 612, 618
         }

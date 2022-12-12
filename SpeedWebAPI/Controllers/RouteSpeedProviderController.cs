@@ -12,12 +12,10 @@ namespace SpeedWebAPI.Controllers
 	{
 
         private readonly ISpeedLimitService _speedLimitService;
-        private readonly ISpeedLimit3PointService _speedLimit3PointService;
 
-        public RouteSpeedProviderController(ISpeedLimitService speedLimitService, ISpeedLimit3PointService speedLimit3PointService)
+        public RouteSpeedProviderController(ISpeedLimitService speedLimitService)
         {
             _speedLimitService = speedLimitService;
-            _speedLimit3PointService = speedLimit3PointService;
         }
 
         /// <summary>
