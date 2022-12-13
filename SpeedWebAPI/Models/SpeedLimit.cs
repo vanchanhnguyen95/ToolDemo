@@ -9,11 +9,11 @@ namespace SpeedWebAPI.Models
     public class SpeedLimit : DisAuditableEntity
     {
         [Key]
-        [Column(Order = 1)]
-        public double Lat { get; set; }// Y
+        [Column(Order = 1, TypeName = "decimal(18,10)")]
+        public decimal Lat { get; set; }// Y
         [Key]
-        [Column(Order = 2)]
-        public double Lng { get; set; } // X
+        [Column(Order = 2, TypeName = "decimal(18,10)")]
+        public decimal Lng { get; set; } // X
         [Key]
         [Column(Order = 3)]
         [MaxLength(1)]

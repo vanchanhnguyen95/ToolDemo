@@ -150,7 +150,8 @@ namespace SpeedWebAPI.Services
         {
             foreach (SpeedLimitPush item in speedLimitParams.data)
             {
-                await UpdateSpeedLimitPush(item);
+                //await UpdateSpeedLimitPush(item);
+               await UpdateSpeedLimitPushV2(item);
             }
 
             return Result<object>.Success(speedLimitParams);
@@ -216,6 +217,80 @@ namespace SpeedWebAPI.Services
                 return Result<object>.Error(ex.ToString());
             }
             
+        }
+
+        private async Task<IResult<object>> UpdateSpeedLimitPushV2(SpeedLimitPush speedLimit)
+        {
+            try
+            {
+                var lstUpd = await Db.SpeedLimits
+                .Where(x => x.Lat == speedLimit.Lat
+                && x.Lng == speedLimit.Lng
+                && x.ProviderType == speedLimit.ProviderType
+                && x.PointError == false).AsNoTracking().ToListAsync();
+
+                if (lstUpd != null)
+                {
+                    foreach(SpeedLimit item in lstUpd)
+                    {
+                        item.MinSpeed = speedLimit.MinSpeed;
+                        item.MaxSpeed = speedLimit.MaxSpeed;
+                        item.PointError = speedLimit.PointError ?? false;
+                        item.UpdateCount++;
+                        item.UpdatedDate = DateTime.Now;
+                        item.UpdatedBy = $"Upd numbers {item.UpdateCount?.ToString()}";
+
+                        Db.Entry(item).State = EntityState.Modified;
+                    }
+                    await Db.SaveChangesAsync();
+                }
+                else
+                {
+                    SpeedLimit obj = new SpeedLimit();
+                    obj.Lat = speedLimit.Lat;
+                    obj.Lng = speedLimit.Lng;
+                    obj.ProviderType = 1;
+                    obj.DeleteFlag = 0;
+                    obj.CreatedDate = DateTime.Now;
+                    obj.UpdateCount = 0;
+                    obj.PointError = false;
+                    Db.SpeedLimits.Add(obj);
+
+                    await Db.SaveChangesAsync();
+                }
+
+                //if (obj != null)
+                //{
+                //    obj.MinSpeed = speedLimit.MinSpeed;
+                //    obj.MaxSpeed = speedLimit.MaxSpeed;
+                //    obj.PointError = speedLimit.PointError ?? false;
+                //    obj.UpdateCount++;
+                //    obj.UpdatedDate = DateTime.Now;
+                //    obj.UpdatedBy = $"Upd numbers {obj.UpdateCount?.ToString()}";
+
+                //    Db.Entry(obj).State = EntityState.Modified;
+                //}
+                //else
+                //{
+                //    obj = new SpeedLimit();
+                //    obj.Lat = speedLimit.Lat;
+                //    obj.Lng = speedLimit.Lng;
+                //    obj.ProviderType = 1;
+                //    obj.DeleteFlag = 0;
+                //    obj.CreatedDate = DateTime.Now;
+                //    obj.UpdateCount = 0;
+                //    obj.PointError = false;
+                //    Db.SpeedLimits.Add(obj);
+                //}
+
+                //await Db.SaveChangesAsync();
+                return Result<object>.Success(lstUpd);
+            }
+            catch (Exception ex)
+            {
+                return Result<object>.Error(ex.ToString());
+            }
+
         }
 
         /// <summary>

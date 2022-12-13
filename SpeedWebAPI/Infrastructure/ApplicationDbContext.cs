@@ -21,6 +21,8 @@ namespace SpeedWebAPI.Infrastructure
                 u.ProviderType,
                 u.Position
             });
+            modelBuilder.Entity<SpeedLimit>().Property(x => x.Lat).HasColumnType("decimal(18,10)").HasPrecision(18,10).IsRequired(true);
+            modelBuilder.Entity<SpeedLimit>().Property(x => x.Lng).HasColumnType("decimal(18,10)").HasPrecision(18,10).IsRequired(true);
             //modelBuilder.Entity<SpeedLimit>().Property(x => x.Lat).HasPrecision(10, 8);
             //modelBuilder.Entity<SpeedLimit>().Property(x => x.Lng).HasPrecision(11, 8);
         }

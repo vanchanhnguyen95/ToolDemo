@@ -11,8 +11,8 @@ namespace SpeedWebAPI.Migrations
                 name: "SpeedLimit",
                 columns: table => new
                 {
-                    Lat = table.Column<double>(type: "float", nullable: false),
-                    Lng = table.Column<double>(type: "float", nullable: false),
+                    Lat = table.Column<decimal>(type: "decimal(18,10)", precision: 18, scale: 10, nullable: false),
+                    Lng = table.Column<decimal>(type: "decimal(18,10)", precision: 18, scale: 10, nullable: false),
                     ProviderType = table.Column<int>(type: "int", maxLength: 1, nullable: false),
                     Position = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     MinSpeed = table.Column<int>(type: "int", nullable: true),

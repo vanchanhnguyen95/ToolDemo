@@ -21,11 +21,13 @@ namespace SpeedWebAPI.Migrations
 
             modelBuilder.Entity("SpeedWebAPI.Models.SpeedLimit", b =>
                 {
-                    b.Property<double>("Lat")
-                        .HasColumnType("float");
+                    b.Property<decimal>("Lat")
+                        .HasPrecision(18, 10)
+                        .HasColumnType("decimal(18,10)");
 
-                    b.Property<double>("Lng")
-                        .HasColumnType("float");
+                    b.Property<decimal>("Lng")
+                        .HasPrecision(18, 10)
+                        .HasColumnType("decimal(18,10)");
 
                     b.Property<int?>("ProviderType")
                         .HasMaxLength(1)

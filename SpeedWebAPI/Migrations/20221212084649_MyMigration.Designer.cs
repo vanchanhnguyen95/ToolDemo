@@ -10,7 +10,7 @@ using SpeedWebAPI.Infrastructure;
 namespace SpeedWebAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20221208075932_MyMigration")]
+    [Migration("20221212084649_MyMigration")]
     partial class MyMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -23,11 +23,13 @@ namespace SpeedWebAPI.Migrations
 
             modelBuilder.Entity("SpeedWebAPI.Models.SpeedLimit", b =>
                 {
-                    b.Property<double>("Lat")
-                        .HasColumnType("float");
+                    b.Property<decimal>("Lat")
+                        .HasPrecision(18, 10)
+                        .HasColumnType("decimal(18,10)");
 
-                    b.Property<double>("Lng")
-                        .HasColumnType("float");
+                    b.Property<decimal>("Lng")
+                        .HasPrecision(18, 10)
+                        .HasColumnType("decimal(18,10)");
 
                     b.Property<int?>("ProviderType")
                         .HasMaxLength(1)

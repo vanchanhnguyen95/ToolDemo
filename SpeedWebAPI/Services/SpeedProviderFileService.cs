@@ -112,8 +112,8 @@ namespace SpeedWebAPI.Services
                         // Thêm điểm đầu
                         lst.Add(new SpeedProviderUpLoadVm()
                         {
-                            Lat = part[0].Y,
-                            Lng = part[0].X,
+                            Lat = (decimal)part[0].Y,
+                            Lng = (decimal)part[0].X,
                             Position = SpeedProviderCons.Position.START,
                             ProviderType = 1,
                             SegmentID = segmenId
@@ -121,8 +121,8 @@ namespace SpeedWebAPI.Services
                         // Thêm điểm cuối
                         lst.Add(new SpeedProviderUpLoadVm()
                         {
-                            Lat = part[1].Y,
-                            Lng = part[1].X,
+                            Lat = (decimal)part[1].Y,
+                            Lng = (decimal)part[1].X,
                             Position = SpeedProviderCons.Position.END,
                             ProviderType = 1,
                             SegmentID = segmenId
@@ -163,11 +163,11 @@ namespace SpeedWebAPI.Services
 
                         // Thêm tọa độ điểm đầu
                         lst.Add(new SpeedProviderUpLoadVm()
-                        { Lat = line.StartPoint.Y, Lng = line.StartPoint.X, SegmentID = segmentID,
+                        { Lat = (decimal)line.StartPoint.Y, Lng = (decimal)line.StartPoint.X, SegmentID = segmentID,
                             ProviderType = 1, Position = SpeedProviderCons.Position.START } );
                         // Thêm tọa độ điểm cuối
                         lst.Add(new SpeedProviderUpLoadVm()
-                        { Lat = line.EndPoint.Y, Lng = line.EndPoint.X, SegmentID = segmentID,
+                        { Lat = (decimal)line.EndPoint.Y, Lng = (decimal)line.EndPoint.X, SegmentID = segmentID,
                             ProviderType = 1, Position = SpeedProviderCons.Position.END });
 
                         // Tính khoảng cách
@@ -365,8 +365,8 @@ namespace SpeedWebAPI.Services
 
                         // Lấy dữ liệu
                         lineAdd.SegmentID = Convert.ToInt64((linesUpload[(int)DataSpeedUpLoad.ColSegmentID]));
-                        lineAdd.Lat = Convert.ToDouble(linesUpload[(int)DataSpeedUpLoad.ColLat]);
-                        lineAdd.Lng = Convert.ToDouble(linesUpload[(int)DataSpeedUpLoad.ColLng]);
+                        lineAdd.Lat = Convert.ToDecimal(linesUpload[(int)DataSpeedUpLoad.ColLat]);
+                        lineAdd.Lng = Convert.ToDecimal(linesUpload[(int)DataSpeedUpLoad.ColLng]);
                         //lineAdd.Note = (linesUpload[(int)DataSpeedUpLoad.ColNote]);
                         listUpload.Add(lineAdd);
                     }
