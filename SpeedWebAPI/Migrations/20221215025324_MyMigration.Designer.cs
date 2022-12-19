@@ -10,7 +10,7 @@ using SpeedWebAPI.Infrastructure;
 namespace SpeedWebAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20221212084649_MyMigration")]
+    [Migration("20221215025324_MyMigration")]
     partial class MyMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -48,6 +48,9 @@ namespace SpeedWebAPI.Migrations
 
                     b.Property<int?>("DeleteFlag")
                         .HasColumnType("int");
+
+                    b.Property<bool?>("IsUpdateSpeed")
+                        .HasColumnType("bit");
 
                     b.Property<int?>("MaxSpeed")
                         .HasColumnType("int");

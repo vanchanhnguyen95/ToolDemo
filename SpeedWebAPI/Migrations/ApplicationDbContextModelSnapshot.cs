@@ -47,6 +47,9 @@ namespace SpeedWebAPI.Migrations
                     b.Property<int?>("DeleteFlag")
                         .HasColumnType("int");
 
+                    b.Property<bool?>("IsUpdateSpeed")
+                        .HasColumnType("bit");
+
                     b.Property<int?>("MaxSpeed")
                         .HasColumnType("int");
 

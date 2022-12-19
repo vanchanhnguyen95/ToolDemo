@@ -28,6 +28,8 @@ namespace SpeedWebAPI.Models
         
         public bool? PointError { get; set; } = false;//True: Tọa độ cung cấp bị lỗi, False: Tọa độ cung cấp ko bị lỗi
         public long? SegmentID { get; set; }
-        
+
+        public bool? IsUpdateSpeed { get; set; } = false;//True: đang cập nhật vận tốc giới hạn
+
     }
 }

@@ -19,6 +19,7 @@ namespace SpeedWebAPI.Migrations
                     MaxSpeed = table.Column<int>(type: "int", nullable: true),
                     PointError = table.Column<bool>(type: "bit", nullable: true),
                     SegmentID = table.Column<long>(type: "bigint", nullable: true),
+                    IsUpdateSpeed = table.Column<bool>(type: "bit", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     CreatedBy = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
