@@ -9,5 +9,6 @@
         public int? ProviderType { get; set; } = 1;
         public bool? PointError { get; set; } = false;
         public long? SegmentID { get; set; }
+        public int? Direction { get; set; }
     }
 }

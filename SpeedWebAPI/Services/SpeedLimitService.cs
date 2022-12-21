@@ -26,6 +26,7 @@ namespace SpeedWebAPI.Services
 
         Task<object> GetSpeedProvidersV3(int? limit);
         Task<object> GetSpeedProvidersV4(int? limit);
+        Task<object> GetSpeedProvidersV5(int? limit);
 
         /// <summary>
         /// Update SpeedLimit từ api Push
@@ -330,6 +331,105 @@ namespace SpeedWebAPI.Services
             }
         }
 
+        public async Task<object> GetSpeedProvidersV5(int? limit)
+        {
+            try
+            {
+                if (limit == null || limit > 100)
+                    limit = 100;
+
+                // Nếu Update Date mà < 6 tháng thì không cho hiển thị ra
+                DateTime UpdDateAllow = (DateTime)DateTime.Now.AddMonths(-6).Date;
+
+                // Lấy ra 1 segmetId có 1 tuyến riêng
+                long? segmentIDGet = await Db.SpeedLimits.Where(
+                                x => x.DeleteFlag == 0
+                                && x.IsUpdateSpeed == false)
+                                .OrderBy(x => x.UpdateCount).ThenBy(x => x.SegmentID).ThenBy(x => x.Lat)
+                                .Select(x => x.SegmentID).FirstOrDefaultAsync();
+
+                var listQuery = await Db.SpeedLimits.Where(
+                                x => x.DeleteFlag == 0
+                                && x.IsUpdateSpeed == false
+                                && x.SegmentID == segmentIDGet)
+                                .OrderBy(x => x.UpdateCount).ThenBy(x => x.Lat).ToListAsync();
+
+                var lstShow = new List<SpeedProvider>();
+                var lstRe = new List<SpeedLimit>();
+
+                foreach (SpeedLimit item in listQuery)
+                {
+                    if (item.UpdatedDate == null || (UpdDateAllow - item.UpdatedDate).Value.Days < 1)
+                    {
+                        SpeedLimit itemAdd = new SpeedLimit();
+                        itemAdd.SegmentID = item.SegmentID;
+                        itemAdd.Lat = item.Lat;
+                        itemAdd.Lng = item.Lng;
+                        itemAdd.ProviderType = item.ProviderType;
+                        itemAdd.Position = item.Position;
+                        itemAdd.Direction = item.Direction;
+
+                        if (item.Position.Trim().IndexOf("S") > -1 && item.Direction == 0)
+                        {
+                            itemAdd.Sort = -1;
+                        }
+                        else if (item.Position.Trim().IndexOf("M") > -1 && item.Direction == 0)
+                        {
+                            itemAdd.Sort = Convert.ToInt32(item.Position.Substring((item.Position.LastIndexOf("-")) + 1, item.Position.Length - (item.Position.LastIndexOf("-")) - 1));
+                        }
+                        else if (item.Position.Trim().IndexOf("E") > -1 && item.Direction == 0)
+                        {
+                            itemAdd.Sort = 999;
+                        }
+                        else if (item.Position.Trim().IndexOf("BS") > -1 && item.Direction == 1)
+                        {
+                            itemAdd.Sort = 9999;
+                        }
+                        else if (item.Position.Trim().IndexOf("BM") > -1 && item.Direction == 1)
+                        {
+                            itemAdd.Sort = 9999 + Convert.ToInt32(item.Position.Substring((item.Position.LastIndexOf("-")) + 1, item.Position.Length - (item.Position.LastIndexOf("-")) - 1));
+                        }
+                        else if (item.Position.Trim().IndexOf("BE") > -1 && item.Direction == 1)
+                        {
+                            itemAdd.Sort = 99999;
+                        }
+                        
+                        
+
+                        lstRe.Add(itemAdd);
+
+                    }
+                }
+
+                //var re = lstRe.Take(limit ?? 100).OrderBy(x => x.SegmentID).ThenBy(x => x.Lat);
+                var re = lstRe.Take(limit ?? 100).OrderBy(x => x.Sort);
+                foreach (SpeedLimit itemspeed in re)
+                {
+                    //var obj = await Db.SpeedLimits
+                    //   .Where(x => x.Lat == itemspeed.Lat
+                    //   && x.Lng == itemspeed.Lng
+                    //   && x.SegmentID == itemspeed.SegmentID
+                    //   && x.ProviderType == itemspeed.ProviderType
+                    //   && x.Position.Trim() == itemspeed.Position.Trim()
+                    //   && x.PointError == false).FirstOrDefaultAsync();
+
+                    //obj.IsUpdateSpeed = true;
+                    //Db.Entry(obj).State = EntityState.Modified;
+
+                    //lstShow.Add(new SpeedProvider() { Lat = itemspeed.Lat, Lng = itemspeed.Lng, ProviderType = itemspeed.ProviderType, SegmentID = itemspeed.SegmentID, Direction = itemspeed.Direction, Position = itemspeed.Position, Sort = itemspeed.Sort });
+                    lstShow.Add(new SpeedProvider() { Lat = itemspeed.Lat, Lng = itemspeed.Lng, ProviderType = itemspeed.ProviderType, SegmentID = itemspeed.SegmentID, Direction = itemspeed.Direction });
+                }
+
+                await Db.SaveChangesAsync();
+
+                return Result<object>.Success(lstShow, lstShow.Count(), Message.SUCCESS);
+            }
+            catch (Exception ex)
+            {
+                return Result<object>.Error(ex.ToString());
+            }
+        }
+
         public async Task<object> GetSpeedProviders(int? limit)
         {
             try
@@ -388,7 +488,7 @@ namespace SpeedWebAPI.Services
             foreach (SpeedLimitPush item in speedLimitParams.data)
             {
                 //await UpdateSpeedLimitPushV4(item);
-                await UpdateSpeedLimitPushV5(item);
+                await UpdateSpeedLimitPushV6(item);
             }
             #region V2
             //// Khóa danh sách dữ liệu đang được request
@@ -658,6 +758,47 @@ namespace SpeedWebAPI.Services
                 && x.DeleteFlag == 0
                 && x.IsUpdateSpeed == true
                 && x.SegmentID == speedLimit.SegmentID
+                //&& x.PointError == false).AsNoTracking().ToListAsync();
+                && x.PointError == false).ToListAsync();
+
+                if (lstUpd != null)
+                {
+                    foreach (SpeedLimit item in lstUpd)
+                    {
+                        item.MinSpeed = speedLimit.MinSpeed;
+                        item.MaxSpeed = speedLimit.MaxSpeed;
+                        item.IsUpdateSpeed = false;
+                        item.PointError = speedLimit.PointError ?? false;
+                        item.UpdateCount++;
+                        item.UpdatedDate = DateTime.Now;
+                        item.UpdatedBy = $"Upd numbers {item.UpdateCount?.ToString()}";
+
+                        Db.Entry(item).State = EntityState.Modified;
+                    }
+                    await Db.SaveChangesAsync();
+                }
+
+                return Result<object>.Success(lstUpd);
+            }
+            catch (Exception ex)
+            {
+                return Result<object>.Error(ex.ToString());
+            }
+
+        }
+
+        private async Task<IResult<object>> UpdateSpeedLimitPushV6(SpeedLimitPush speedLimit)
+        {
+            try
+            {
+                var lstUpd = await Db.SpeedLimits
+                .Where(x => x.Lat == speedLimit.Lat
+                && x.Lng == speedLimit.Lng
+                && x.ProviderType == speedLimit.ProviderType
+                && x.DeleteFlag == 0
+                && x.IsUpdateSpeed == true
+                && x.SegmentID == speedLimit.SegmentID
+                && x.Direction == speedLimit.Direction
                 //&& x.PointError == false).AsNoTracking().ToListAsync();
                 && x.PointError == false).ToListAsync();
 

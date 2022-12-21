@@ -21,7 +21,7 @@ namespace SpeedWebAPI.Models
         [Key]
         [Column(Order = 4)]
         [MaxLength(50)]
-        public string Position { get; set; }//S:Start, E:End: M-1, M-2: Middle-1,2,...
+        public string Position { get; set; }//S:Start, E:End: M-1, M-2: Middle-1,2,BS: ngược lại start, BE; ngược lại End, tương tự M cũng phải chạy ngược
 
         public int? MinSpeed { get; set; } = 0;
         public int? MaxSpeed { get; set; } = 0;
@@ -30,6 +30,8 @@ namespace SpeedWebAPI.Models
         public long? SegmentID { get; set; }
 
         public bool? IsUpdateSpeed { get; set; } = false;//True: đang cập nhật vận tốc giới hạn
+        public int? Direction { get; set; } = 0;// Hướng 0: chiều xuôi, 1: chiều ngược lại
+
         [NotMapped]
         public decimal Sort { get; set; } // Sort theo tổng của (5 chữ số sau dấu phẩy của lat + 5 chữ số sau dấu phẩy của long)
     }
