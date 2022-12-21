@@ -30,6 +30,5 @@ namespace SpeedWebAPI.Models
         public long? SegmentID { get; set; }
 
         public bool? IsUpdateSpeed { get; set; } = false;//True: đang cập nhật vận tốc giới hạn
-
     }
 }
