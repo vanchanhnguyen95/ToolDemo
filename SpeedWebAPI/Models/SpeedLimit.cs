@@ -30,5 +30,7 @@ namespace SpeedWebAPI.Models
         public long? SegmentID { get; set; }
 
         public bool? IsUpdateSpeed { get; set; } = false;//True: đang cập nhật vận tốc giới hạn
+        [NotMapped]
+        public decimal Sort { get; set; } // Sort theo tổng của (5 chữ số sau dấu phẩy của lat + 5 chữ số sau dấu phẩy của long)
     }
 }

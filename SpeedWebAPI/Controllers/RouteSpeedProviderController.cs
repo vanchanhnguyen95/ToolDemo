@@ -28,7 +28,7 @@ namespace SpeedWebAPI.Controllers
         [Route("Get")]
         public async Task<IActionResult> Get(int? limit)
         {
-            var data = await _speedLimitService.GetSpeedProvidersV3(limit);
+            var data = await _speedLimitService.GetSpeedProvidersV4(limit);
             return Ok(data);
         }
 

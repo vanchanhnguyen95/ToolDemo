@@ -25,6 +25,7 @@ namespace SpeedWebAPI.Services
         Task<object> GetSpeedProvidersV2(int? limit);
 
         Task<object> GetSpeedProvidersV3(int? limit);
+        Task<object> GetSpeedProvidersV4(int? limit);
 
         /// <summary>
         /// Update SpeedLimit từ api Push
@@ -198,14 +199,10 @@ namespace SpeedWebAPI.Services
                         lstRe.Add(new SpeedLimit()
                         {
                             SegmentID = item.SegmentID
-                            ,
-                            Lat = item.Lat
-                            ,
-                            Lng = item.Lng
-                            ,
-                            ProviderType = item.ProviderType
-                            ,
-                            Position = item.Position
+                            ,Lat = item.Lat
+                            ,Lng = item.Lng
+                            ,ProviderType = item.ProviderType
+                            ,Position = item.Position
                         });
                     }
                 }
@@ -273,22 +270,40 @@ namespace SpeedWebAPI.Services
                     if (item.UpdatedDate == null || (UpdDateAllow - item.UpdatedDate).Value.Days < 1)
                     {
                         //lstRe.Add(new SpeedProvider() { Lat = item.Lat, Lng = item.Lng, ProviderType = item.ProviderType });
-                        lstRe.Add(new SpeedLimit()
+                        SpeedLimit itemAdd = new SpeedLimit();
+                        itemAdd.SegmentID = item.SegmentID;
+                        itemAdd.Lat = item.Lat;
+                        itemAdd.Lng = item.Lng;
+                        itemAdd.ProviderType = item.ProviderType;
+                        itemAdd.Position = item.Position;
+
+                        if (item.Position.Trim().IndexOf("S") > -1)
                         {
-                            SegmentID = item.SegmentID
-                            ,
-                            Lat = item.Lat
-                            ,
-                            Lng = item.Lng
-                            ,
-                            ProviderType = item.ProviderType
-                            ,
-                            Position = item.Position
-                        });
+                            itemAdd.Sort = -1;
+                        }else if(item.Position.Trim().IndexOf("E") > -1)
+                        {
+                            itemAdd.Sort = 999;
+                        }else
+                        {
+                            itemAdd.Sort = Convert.ToInt32(item.Position.Substring((item.Position.LastIndexOf("-")) + 1, item.Position.Length - (item.Position.LastIndexOf("-")) - 1));
+                        }
+
+                        lstRe.Add(itemAdd);
+
+                        //lstRe.Add(new SpeedLimit()
+                        //{
+                        //    SegmentID = item.SegmentID,
+                        //    Lat = item.Lat
+                        //    ,Lng = item.Lng
+                        //    ,ProviderType = item.ProviderType
+                        //    ,Position = item.Position
+                        //    ,Sort = Convert.ToInt32(item.Position.Substring((item.Position.LastIndexOf("-")) + 1, item.Position.Length - (item.Position.LastIndexOf("-")) - 1))
+                        //});
                     }
                 }
 
-                var re = lstRe.Take(limit ?? 100).OrderBy(x => x.SegmentID).ThenBy(x => x.Lat);
+                //var re = lstRe.Take(limit ?? 100).OrderBy(x => x.SegmentID).ThenBy(x => x.Lat);
+                var re = lstRe.Take(limit ?? 100).OrderBy(x => x.Sort);
                 foreach (SpeedLimit itemspeed in re)
                 {
                     var obj = await Db.SpeedLimits
