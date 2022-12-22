@@ -342,16 +342,17 @@ namespace SpeedWebAPI.Services
                 DateTime UpdDateAllow = (DateTime)DateTime.Now.AddMonths(-6).Date;
 
                 // Lấy ra 1 segmetId có 1 tuyến riêng
-                long? segmentIDGet = await Db.SpeedLimits.Where(
+                SpeedLimit itemGet = await Db.SpeedLimits.Where(
                                 x => x.DeleteFlag == 0
                                 && x.IsUpdateSpeed == false)
                                 .OrderBy(x => x.UpdateCount).ThenBy(x => x.SegmentID).ThenBy(x => x.Lat)
-                                .Select(x => x.SegmentID).FirstOrDefaultAsync();
+                                .FirstOrDefaultAsync();
 
                 var listQuery = await Db.SpeedLimits.Where(
                                 x => x.DeleteFlag == 0
                                 && x.IsUpdateSpeed == false
-                                && x.SegmentID == segmentIDGet)
+                                && x.SegmentID == itemGet.SegmentID
+                                && x.Direction == itemGet.Direction)
                                 .OrderBy(x => x.UpdateCount).ThenBy(x => x.Lat).ToListAsync();
 
                 var lstShow = new List<SpeedProvider>();
@@ -381,43 +382,40 @@ namespace SpeedWebAPI.Services
                         {
                             itemAdd.Sort = 999;
                         }
+                        
                         else if (item.Position.Trim().IndexOf("BS") > -1 && item.Direction == 1)
                         {
                             itemAdd.Sort = 9999;
                         }
                         else if (item.Position.Trim().IndexOf("BM") > -1 && item.Direction == 1)
                         {
-                            itemAdd.Sort = 9999 + Convert.ToInt32(item.Position.Substring((item.Position.LastIndexOf("-")) + 1, item.Position.Length - (item.Position.LastIndexOf("-")) - 1));
+                            itemAdd.Sort = 10000 + Convert.ToInt32(item.Position.Substring((item.Position.LastIndexOf("-")) + 1, item.Position.Length - (item.Position.LastIndexOf("-")) - 1));
                         }
                         else if (item.Position.Trim().IndexOf("BE") > -1 && item.Direction == 1)
                         {
                             itemAdd.Sort = 99999;
                         }
                         
-                        
-
                         lstRe.Add(itemAdd);
-
                     }
                 }
 
-                //var re = lstRe.Take(limit ?? 100).OrderBy(x => x.SegmentID).ThenBy(x => x.Lat);
                 var re = lstRe.Take(limit ?? 100).OrderBy(x => x.Sort);
                 foreach (SpeedLimit itemspeed in re)
                 {
-                    //var obj = await Db.SpeedLimits
-                    //   .Where(x => x.Lat == itemspeed.Lat
-                    //   && x.Lng == itemspeed.Lng
-                    //   && x.SegmentID == itemspeed.SegmentID
-                    //   && x.ProviderType == itemspeed.ProviderType
-                    //   && x.Position.Trim() == itemspeed.Position.Trim()
-                    //   && x.PointError == false).FirstOrDefaultAsync();
+                    var obj = await Db.SpeedLimits
+                       .Where(x => x.Lat == itemspeed.Lat
+                       && x.Lng == itemspeed.Lng
+                       && x.SegmentID == itemspeed.SegmentID
+                       && x.ProviderType == itemspeed.ProviderType
+                       && x.Position.Trim() == itemspeed.Position.Trim()
+                       && x.PointError == false).FirstOrDefaultAsync();
 
-                    //obj.IsUpdateSpeed = true;
-                    //Db.Entry(obj).State = EntityState.Modified;
+                    obj.IsUpdateSpeed = true;
+                    Db.Entry(obj).State = EntityState.Modified;
 
                     //lstShow.Add(new SpeedProvider() { Lat = itemspeed.Lat, Lng = itemspeed.Lng, ProviderType = itemspeed.ProviderType, SegmentID = itemspeed.SegmentID, Direction = itemspeed.Direction, Position = itemspeed.Position, Sort = itemspeed.Sort });
-                    lstShow.Add(new SpeedProvider() { Lat = itemspeed.Lat, Lng = itemspeed.Lng, ProviderType = itemspeed.ProviderType, SegmentID = itemspeed.SegmentID, Direction = itemspeed.Direction });
+                    lstShow.Add(new SpeedProvider() { Lat = itemspeed.Lat, Lng = itemspeed.Lng, ProviderType = itemspeed.ProviderType, SegmentID = itemspeed.SegmentID, Direction = itemspeed.Direction});
                 }
 
                 await Db.SaveChangesAsync();
