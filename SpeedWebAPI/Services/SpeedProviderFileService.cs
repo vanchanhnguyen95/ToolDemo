@@ -136,52 +136,6 @@ namespace SpeedWebAPI.Services
             return lst;
         }
 
-        private async Task<List<SpeedProviderUpLoadVm>> GetSpeedProviderFromShpFileAspose(string pathFile)
-        {
-            List<SpeedProviderUpLoadVm> lst = null;
-            //var layer1 = Drivers.Shapefile.OpenLayer(@"E:\Data_shp\QL1ATest100\100Line.shp");
-            //var layer1 = Aspose.Gis.Drivers.Shapefile.OpenLayer(pathFile);
-            int cnt = 500;
-            lst = new List<SpeedProviderUpLoadVm>();
-
-            while (cnt > 0)
-            {
-                // Đọc thông tin từ Point
-                //using (var layer = Drivers.Shapefile.OpenLayer(@"E:\Data_shp\QL1ATest100\100Line.shp"))
-                using (var layer = Aspose.Gis.Drivers.Shapefile.OpenLayer(pathFile))
-                {
-                    //int count = layer.Count;
-                    // cho biến chạy đến 50 vì lince đang cho lưu 100 dòng
-                    for (int j = 0; j < 50; j++)
-                    {
-                        // Lấy dữ liệu thông tin Field SegmentID
-                        Aspose.Gis.Feature feature = layer[j];
-                        long segmentID = feature.GetValue<long>("SegmentID");
-
-                        // Duyệt từng dòng line
-                        var line = layer[j].Geometry as Aspose.Gis.Geometries.LineString;
-
-                        // Thêm tọa độ điểm đầu
-                        lst.Add(new SpeedProviderUpLoadVm()
-                        { Lat = (decimal)line.StartPoint.Y, Lng = (decimal)line.StartPoint.X, SegmentID = segmentID,
-                            ProviderType = 1, Position = SpeedProviderCons.Position.START } );
-                        // Thêm tọa độ điểm cuối
-                        lst.Add(new SpeedProviderUpLoadVm()
-                        { Lat = (decimal)line.EndPoint.Y, Lng = (decimal)line.EndPoint.X, SegmentID = segmentID,
-                            ProviderType = 1, Position = SpeedProviderCons.Position.END });
-
-                        // Tính khoảng cách
-                        //double length = line.GetLength();
-                    }
-
-                    cnt -= 50;
-
-                }
-            }
-
-            return lst;
-        }
-
         public async Task<IResultFile<object>> UpdateListSpeedProvider(IFormFile postedFile)
         {
             try
@@ -446,9 +400,6 @@ namespace SpeedWebAPI.Services
             return filePath;
 
         }
-
-       
-
 
         #endregion
     }
