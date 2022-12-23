@@ -191,7 +191,7 @@ namespace SpeedWebAPI.Services
 
             foreach (SpeedLimitPush item in speedLimitParams.data)
             {
-                await UpdateSpeedLimitPushV6(item);
+                await UpdateSpeedLimitPush(item);
             }
 
             return Result<object>.Success(speedLimitParams);
@@ -210,7 +210,7 @@ namespace SpeedWebAPI.Services
 
         #region private method
 
-        private async Task<IResult<object>> UpdateSpeedLimitPushV6(SpeedLimitPush speedLimit)
+        private async Task<IResult<object>> UpdateSpeedLimitPush(SpeedLimitPush speedLimit)
         {
             try
             {
