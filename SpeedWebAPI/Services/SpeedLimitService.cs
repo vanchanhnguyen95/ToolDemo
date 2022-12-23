@@ -404,18 +404,21 @@ namespace SpeedWebAPI.Services
                 foreach (SpeedLimit itemspeed in re)
                 {
                     var obj = await Db.SpeedLimits
-                       .Where(x => x.Lat == itemspeed.Lat
+                       .Where(x => x.Lat == (decimal)itemspeed.Lat
                        && x.Lng == itemspeed.Lng
-                       && x.SegmentID == itemspeed.SegmentID
+                       && x.SegmentID == (decimal)itemspeed.SegmentID
+                       && x.Direction == itemspeed.Direction
                        && x.ProviderType == itemspeed.ProviderType
                        && x.Position.Trim() == itemspeed.Position.Trim()
                        && x.PointError == false).FirstOrDefaultAsync();
 
-                    obj.IsUpdateSpeed = true;
-                    Db.Entry(obj).State = EntityState.Modified;
-
+                    if(obj != null)
+                    {
+                        obj.IsUpdateSpeed = true;
+                        Db.Entry(obj).State = EntityState.Modified;
+                        lstShow.Add(new SpeedProvider() { Lat = itemspeed.Lat, Lng = itemspeed.Lng, ProviderType = itemspeed.ProviderType, SegmentID = itemspeed.SegmentID, Direction = itemspeed.Direction });
+                    }
                     //lstShow.Add(new SpeedProvider() { Lat = itemspeed.Lat, Lng = itemspeed.Lng, ProviderType = itemspeed.ProviderType, SegmentID = itemspeed.SegmentID, Direction = itemspeed.Direction, Position = itemspeed.Position, Sort = itemspeed.Sort });
-                    lstShow.Add(new SpeedProvider() { Lat = itemspeed.Lat, Lng = itemspeed.Lng, ProviderType = itemspeed.ProviderType, SegmentID = itemspeed.SegmentID, Direction = itemspeed.Direction});
                 }
 
                 await Db.SaveChangesAsync();
