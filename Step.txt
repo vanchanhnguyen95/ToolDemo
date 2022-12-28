@@ -1,0 +1,46 @@
+
+1. Tạo dữ liệu dạng Point từ dữ liệu dạng Polyline
+Generate Points Along Lines
+
+2. Calculate latitude and longitude for point features
+https://support.esri.com/en/technical-article/000008944
+
+3. Generate Points Along Lines
+https://www.youtube.com/watch?v=EbqWLEs6CFs
+
+
+1. Phòng bản đồ cung cấp file dạng .txt
+  - File chị Yến cung cấp thì đang ở dữ liệu dạng Polyline
+  - Chuyển đổi dữ liệu dạng Polyline sang dạng Point
+  - Tạo thêm Trường get ra tọa độ : Lat, Longitute (vì Api anh Hiện cần dữ liệu dạng (Lat, long))
+  - Export ra file .txt gồm các trường: SegmentID, Lat,Lng
+  
+2. Viết Api nhận vào file .txt, sau đó import dữ liệu vào database
+
+3. Viết Api get dữ liệu trả về danh sách các điểm (Lat,lng) cho phía anh Hiện
+
+4. Viết Api cập nhật tốc độ giới hạn ở phía anh Hiện sử dụng, params là danh sách các điểm get từ Api ở Bước 3
+
+5. Viết Api trả về file .txt gồm các trường: SegmentID,Lat,Lng,MinSpeed,MaxSpeed gửi về Phòng bản đồ
+  - Params là file .txt giống như bước 2.
+  
+6. Phòng bản đồ dùng file .txt ở bước 5, liên kết qua SegmentID để cập nhật thêm MinSpeed,MaxSpeed
+
+
+===================================================================================================
+
+Từ file 
+
+1. Phòng bản đồ cung cấp file dạng .shap (Polyline)
+
+2. Viết Api nhận vào file .shp, sau đó import dữ liệu vào database
+
+3. Viết Api get dữ liệu trả về danh sách các điểm (Lat,lng) cho phía anh Hiện
+
+4. Viết Api cập nhật tốc độ giới hạn ở phía anh Hiện sử dụng, params là danh sách các điểm get từ Api ở Bước 3
+
+5. Viết Api trả về file .shp gồm các trường: SegmentID,Lat,Lng,MinSpeed,MaxSpeed gửi về Phòng bản đồ
+  - Params là file .shp giống như bước 2.
+  
+6. Phòng bản đồ dùng file .shp ở bước 5, liên kết qua SegmentID để cập nhật thêm MinSpeed,MaxSpeed
+
