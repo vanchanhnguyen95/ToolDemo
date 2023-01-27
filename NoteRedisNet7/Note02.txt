@@ -1,0 +1,19 @@
+Demo Redis
+
+1. Cài đặt Redis
+https://dev.to/divshekhar/how-to-install-redis-on-windows-10-3e99
+
+2. Tạo project Net 7
+- Tạo webapi
+
+3. Cài thêm các nuget
+- Microsoft.AspNetCore.DataProtection.StackExchangeRedis 
+
+4.
+ 1. Cấu hình cho cache
+ 
+5. Ứng dụng cache vào 1 method nào đó trong controller
+- Phải hiểu về life cycle
+ - Khi gọi đến 1 controller: nó sẽ bắt đầu đi từ trên xuống dưới, sau đó khởi tạo các controller, sau đó đi qua các Attribute gắn ở trên mỗi method, xogn rồi mới đi vào trong method
+
+MiddleWare

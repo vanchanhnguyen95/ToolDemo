@@ -1,0 +1,22 @@
+https://www.youtube.com/watch?v=dPovN2qy7Vk
+
+Tối ưu câu truy vấn
+Đánh index
+Cache => Redis
+Search Enginee => Elasticsearch
+
+====================================
+
+Persistent
+Consistent
+
+Cache()
+GetAllPaging
+
+Khi data thay đổi, các bạn sử lý cache như thế nào
+
+Sử dụng Cache chưa?
+
+1. Thực ra cache là 1 database thôi. Nhưng mà nó hỗ trợ lưu dữ liệu dạng phi cấu trúc(key: value)
+2. Nó hỗ  trợ đọc ghi dữ liệu trên Ram nên tốc độ nó đọc ghi rất nhanh
+3. Khi update vào database thì cũng update vào cache
