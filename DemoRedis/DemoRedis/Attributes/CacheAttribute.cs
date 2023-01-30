@@ -24,8 +24,8 @@ namespace DemoRedis.Attributes
                 await next();
                 return;
             }
-            // Xem cache có hay chưa
 
+            // Xem cache có hay chưa
             var cacheService = context.HttpContext.RequestServices.GetRequiredService<IResponseCacheService>();
 
             var cacheKey = GenerateCacheKeyFromRequest(context.HttpContext.Request);
@@ -47,7 +47,9 @@ namespace DemoRedis.Attributes
             // nếu chưa có dữ liệu thì đưa vào cache
             var excutedContext = await next();
             if (excutedContext.Result is OkObjectResult objectResult)
-                await cacheService.SetCacheResponseAsync(cacheKey, objectResult.Value, TimeSpan.FromSeconds(_timeToLiveSeconds));
+#pragma warning disable CS8604 // Possible null reference argument.
+                await cacheService.SetCacheResponseAsync(cacheKey, response: objectResult.Value, TimeSpan.FromSeconds(_timeToLiveSeconds));
+#pragma warning restore CS8604 // Possible null reference argument.
         }
 
         private static string GenerateCacheKeyFromRequest(HttpRequest request)

@@ -1,4 +1,5 @@
-﻿namespace DemoRedis.Installers
+﻿
+namespace DemoRedis.Installers
 {
     public class SystemInstaller : IInstaller
     {

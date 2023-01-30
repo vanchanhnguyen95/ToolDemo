@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.FileSystemGlobbing.Internal;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using StackExchange.Redis;
@@ -17,13 +18,41 @@ namespace DemoRedis.Services
             _distributedCache = distributedCache;
             _connectionMultiplexer = connectionMultiplexer;
             _databaseAsync = connectionMultiplexer.GetDatabase();
-
         }
 
         public async Task<string> GetCacheResponseAsync(string cacheKey)
         {
-           var cacheResponse = await _distributedCache.GetStringAsync(cacheKey);
-            return string.IsNullOrEmpty(cacheResponse) ? null : cacheResponse;
+            var cacheResponse = await _databaseAsync.StringGetAsync(cacheKey);
+            return cacheResponse;
+        }
+
+        public async Task RemoveCacheResponseAsync(string pattern)
+        {
+            if (string.IsNullOrWhiteSpace(pattern))
+                throw new ArgumentException("Value cannot be null or white space");
+
+            await foreach (var key in GetkeyAsync(pattern + "*"))
+            {
+                //await _distributedCache.RemoveAsync(key);
+                bool _isKeyExist = await _databaseAsync.KeyExistsAsync(key);
+                if (_isKeyExist == true)
+                    await _databaseAsync.KeyDeleteAsync(key);
+            }
+        }
+
+        private async IAsyncEnumerable<string> GetkeyAsync(string pattern)
+        {
+            if (string.IsNullOrWhiteSpace(pattern))
+                throw new ArgumentException("Value cannot be null or white space");
+
+            foreach(var endPoint in _connectionMultiplexer.GetEndPoints())
+            {
+                var server = _connectionMultiplexer.GetServer(endPoint);
+                foreach(var key in server.Keys(pattern: pattern))
+                {
+                    yield return key.ToString();
+                }
+            }
         }
 
         public async Task SetCacheResponseAsync(string cacheKey, object response, TimeSpan timeOut)
@@ -40,25 +69,11 @@ namespace DemoRedis.Services
 
             var redisCustomerList = Encoding.UTF8.GetBytes(serializedCustomerList);
 
-            var options = new DistributedCacheEntryOptions()
-            .SetAbsoluteExpiration(DateTime.Now.AddMinutes(10))
-            .SetSlidingExpiration(TimeSpan.FromMinutes(2));
-            await _distributedCache.SetAsync(cacheKey, redisCustomerList, options);
-
-            // Set up thời gian vào cache
-            //await _distributedCache.SetStringAsync(cacheKey, serializerResponse, new DistributedCacheEntryOptions
-            //{
-            //    AbsoluteExpirationRelativeToNow= timeOut
-            //});
-            //await _distributedCache.SetStringAsync(cacheKey, serializerResponse, new DistributedCacheEntryOptions
-            //{
-            //    AbsoluteExpirationRelativeToNow = timeOut
-            //});
-
             //var options = new DistributedCacheEntryOptions()
             //.SetAbsoluteExpiration(DateTime.Now.AddMinutes(10))
             //.SetSlidingExpiration(TimeSpan.FromMinutes(2));
-            //await _distributedCache.SetAsync(cacheKey, serializerResponse, options);
+            //await _distributedCache.SetAsync(cacheKey, redisCustomerList, options);
+            await _databaseAsync.StringSetAsync(cacheKey, redisCustomerList, timeOut);
         }
     }
 }
