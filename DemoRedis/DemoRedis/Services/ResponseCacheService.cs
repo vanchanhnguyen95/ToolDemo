@@ -9,13 +9,11 @@ namespace DemoRedis.Services
 {
     public class ResponseCacheService : IResponseCacheService
     {
-        private readonly IDistributedCache _distributedCache;
         private readonly IConnectionMultiplexer _connectionMultiplexer;
         private readonly IDatabaseAsync _databaseAsync;
 
-        public ResponseCacheService(IDistributedCache distributedCache, IConnectionMultiplexer connectionMultiplexer)
+        public ResponseCacheService(IConnectionMultiplexer connectionMultiplexer)
         {
-            _distributedCache = distributedCache;
             _connectionMultiplexer = connectionMultiplexer;
             _databaseAsync = connectionMultiplexer.GetDatabase();
         }
@@ -67,13 +65,12 @@ namespace DemoRedis.Services
                 ContractResolver = new CamelCasePropertyNamesContractResolver()
             });
 
-            var redisCustomerList = Encoding.UTF8.GetBytes(serializedCustomerList);
-
+            //var redisCustomerList = Encoding.UTF8.GetBytes(serializedCustomerList);
             //var options = new DistributedCacheEntryOptions()
             //.SetAbsoluteExpiration(DateTime.Now.AddMinutes(10))
             //.SetSlidingExpiration(TimeSpan.FromMinutes(2));
             //await _distributedCache.SetAsync(cacheKey, redisCustomerList, options);
-            await _databaseAsync.StringSetAsync(cacheKey, redisCustomerList, timeOut);
+            await _databaseAsync.StringSetAsync(cacheKey, Encoding.UTF8.GetBytes(serializedCustomerList), timeOut);
         }
     }
 }
