@@ -70,7 +70,8 @@ namespace DemoRedis.Services
             //.SetAbsoluteExpiration(DateTime.Now.AddMinutes(10))
             //.SetSlidingExpiration(TimeSpan.FromMinutes(2));
             //await _distributedCache.SetAsync(cacheKey, redisCustomerList, options);
-            await _databaseAsync.StringSetAsync(cacheKey, Encoding.UTF8.GetBytes(serializedCustomerList), timeOut);
+            //await _databaseAsync.StringSetAsync(cacheKey, Encoding.UTF8.GetBytes(serializedCustomerList), timeOut);
+            await _databaseAsync.StringSetAsync(cacheKey, Encoding.UTF8.GetBytes(serializedCustomerList));
         }
     }
 }
