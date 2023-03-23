@@ -33,14 +33,33 @@ Từ file
 
 1. Phòng bản đồ cung cấp file dạng .shap (Polyline)
 
-2. Viết Api nhận vào file .shp, sau đó import dữ liệu vào database
+2. Viết Tool nhận vào file .shp, sau đó import dữ liệu vào database
 
-3. Viết Api get dữ liệu trả về danh sách các điểm (Lat,lng) cho phía anh Hiện
+3. Viết Api nhận vào file .shp, sau đó import dữ liệu vào database
 
-4. Viết Api cập nhật tốc độ giới hạn ở phía anh Hiện sử dụng, params là danh sách các điểm get từ Api ở Bước 3
+4. Viết Api get dữ liệu trả về danh sách các điểm (Lat,lng) cho phía anh Hiện
+ - Output mỗi lần là 1 danh sách các điểm là 1 segment, đi 1 chiều
 
-5. Viết Api trả về file .shp gồm các trường: SegmentID,Lat,Lng,MinSpeed,MaxSpeed gửi về Phòng bản đồ
+5. Viết Api cập nhật tốc độ giới hạn ở phía anh Hiện sử dụng, params là danh sách các điểm get từ Api ở Bước 4
+
+6. Viết Tool trả về file .shp gồm các trường: SegmentID,Lat,Lng,MinSpeed,MaxSpeed gửi về Phòng bản đồ
   - Params là file .shp giống như bước 2.
+  - Ouputput là shape file:
+	+ shape file dạng polyline là những dữ liệu có vận tốc ko thay đổi trên 1 segment
+	+ shape file dạng Point là những dữ liệu có vận tốc thay đổi trên 1 segment
   
-6. Phòng bản đồ dùng file .shp ở bước 5, liên kết qua SegmentID để cập nhật thêm MinSpeed,MaxSpeed
+7. Phòng bản đồ dùng file .shp ở bước 6, liên kết qua SegmentID để cập nhật thêm MinSpeed,MaxSpeed
 
+
+I have line segment defined by these two points: A(x1,y1,z1) and B(x2,y2,z2). I have point p(x,y,z). How can I check if the point lies on the line segment?
+
+If the point is on the line then:
+
+(x - x1) / (x2 - x1) = (y - y1) / (y2 - y1) = (z - z1) / (z2 - z1)
+Calculate all three values, and if they are the same (to some degree of tolerance), your point is on the line.
+
+To test if the point is in the segment, not just on the line, you can check that
+
+x1 < x < x2, assuming x1 < x2, or
+y1 < y < y2, assuming y1 < y2, or
+z1 < z < z2, assuming z1 < z2
