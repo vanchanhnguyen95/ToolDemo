@@ -27,14 +27,5 @@
     <Folder Include="wwwroot\Uploads\" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Reference Include="Aspose.GIS">
-      <HintPath>..\..\..\library\Aspose.GIS_22.3\bin\net47\Aspose.GIS.dll</HintPath>
-    </Reference>
-    <Reference Include="Catfood.Shapefile">
-      <HintPath>..\..\..\library\Catfood\Catfood.Shapefile.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-
 
 </Project>

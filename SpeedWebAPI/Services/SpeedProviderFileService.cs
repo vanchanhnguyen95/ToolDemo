@@ -37,9 +37,39 @@ namespace SpeedWebAPI.Services
         Task<IResultFile<object>> UpdSpeedProviderFromShpFile(string pathFile);
     }
     #endregion
-    public class SpeedProviderFileService : BaseService<SpeedLimit, ApplicationDbContext>, ISpeedProviderFileService
+    public class SpeedProviderFileService : ISpeedProviderFileService
     {
+        public void Add(SpeedLimit obj)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Delete(SpeedLimit obj)
+        {
+            throw new NotImplementedException();
+        }
+
+        public SpeedLimit Get(object id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IQueryable<SpeedLimit> GetAll()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<SpeedLimit> GetAsync(object id)
+        {
+            throw new NotImplementedException();
+        }
+
         public Task<IResultFile<object>> GetFileListSpeedFromFileUpd(IFormFile postedFile)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task Save()
         {
             throw new NotImplementedException();
         }
