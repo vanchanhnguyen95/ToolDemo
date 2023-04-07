@@ -3,7 +3,9 @@ using Microsoft.AspNetCore.Mvc;
 using SpeedWebAPI.Models.SpeedLimitPQA;
 using SpeedWebAPI.Services;
 using SpeedWebAPI.ViewModels;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -22,9 +24,41 @@ namespace SpeedWebAPI.Controllers
         [HttpPost]
         [MapToApiVersion("1")]
         [HttpPost("FromFileExcel")]
-        public async Task<ImportResponse<List<SpeedLimitPQA>>> FromFileExcel(IFormFile formFile,string routeType, CancellationToken cancellationToken)
+        public async Task<ImportResponse<List<SpeedLimitPQA>>> FromFileExcel(IFormFile formFile,int providerType, CancellationToken cancellationToken)
         {
-            return await _service.ImportFromFileExcel(formFile, routeType, cancellationToken);
+            return await _service.ImportFromFileExcel(formFile, providerType, cancellationToken);
+        }
+
+        [HttpGet]
+        [MapToApiVersion("1")]
+        [Route("GetSpeedFromAPIPQA")]
+        public async Task<IActionResult> GetSpeedFromAPIPQA(string url = "http://103.47.194.15:11580/geocodebulk", int providerType = 2000)
+        {
+            var data = await _service.GetSpeedFromAPIPQA(url, providerType);
+            return Ok(data);
+        }
+
+        // HttpGet
+        [HttpGet("ExportFromExcel")]
+        public async Task<IActionResult> ExportFromExcel(int providerType, CancellationToken cancellationToken)
+        {
+            // query data from database
+            MemoryStream stream = await _service.ExportFromExcel(providerType);
+
+            string fileNameEx = @"Tổng hợp";
+            if (providerType == 2000)
+            {
+                fileNameEx = @"HaTinh";
+            }
+            else if(providerType == 1000)
+            {
+                fileNameEx = @"NgheAn";
+            }    
+               
+            string excelName = $"{fileNameEx}-TongHop-{DateTime.Now.ToString("yyyyMMddHH")}.xlsx";
+
+            //return File(stream, "application/octet-stream", excelName);
+            return File(stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", excelName);
         }
 
         /// <summary>

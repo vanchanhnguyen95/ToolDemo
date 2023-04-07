@@ -11,9 +11,9 @@ namespace SpeedWebAPI.Models.SpeedLimitPQA
         public LocationPQA() { }
         public LocationPQA(LocationPQA orther)
         {
-            lng = orther.lng;
-            lat = orther.lat;
-            vehicle_code = "300";
+            this.lng = orther.lng;
+            this.lat = orther.lat;
+            this.vehicle_code = "300";
         }
         public LocationPQA(decimal lng, decimal lat, string vehicle_code = "300")
         {

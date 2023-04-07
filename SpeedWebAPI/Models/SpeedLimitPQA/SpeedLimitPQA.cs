@@ -7,6 +7,8 @@ namespace SpeedWebAPI.Models.SpeedLimitPQA
     [Table("SpeedLimitPQA")]
     public class SpeedLimitPQA : DisAuditableEntity
     {
+        
+
         [Key]
         [Column(Order = 1, TypeName = "decimal(18,10)")]
         public decimal Lat { get; set; }// Y
@@ -16,7 +18,7 @@ namespace SpeedWebAPI.Models.SpeedLimitPQA
         //[Key]
         //[Column(Order = 3)]
         //[MaxLength(1)]
-        public int? ProviderType { get; set; } = 1;//1:Navital; 2:VietMap; 100:Nghe An, 200 Ha Tinh
+        public int? ProviderType { get; set; } = 1;//1:Navital; 2:VietMap; 1000:Nghe An, 2000 Ha Tinh
         [Key]
         [Column(Order = 4)]
         [MaxLength(50)]
@@ -36,8 +38,9 @@ namespace SpeedWebAPI.Models.SpeedLimitPQA
         public int SpeedDetect { get; set; }
         public int SpeedPQA { get; set; }
         public string Address { set; get; }
-        public string FileName  { set; get; }
-        public string RouteType { set; get; }// Loại tuyến đường đễ phân biệt khi import : 1: Nghệ An, 2: Hà Tĩnh
+        public string FileName { set; get; }
+        //public string RouteType { set; get; }// Loại tuyến đường đễ phân biệt khi import : 1: Nghệ An, 2: Hà Tĩnh
         public bool IsUpdSpeedPQA { get; set; } = false;
+
     }
 }

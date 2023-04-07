@@ -131,9 +131,6 @@ namespace SpeedWebAPI.Migrations
                     b.Property<int?>("ProviderType")
                         .HasColumnType("int");
 
-                    b.Property<string>("RouteType")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int>("STT")
                         .HasColumnType("int");
 

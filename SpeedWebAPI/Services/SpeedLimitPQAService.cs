@@ -2,10 +2,10 @@
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using OfficeOpenXml;
+using OfficeOpenXml.Style;
 using SpeedWebAPI.Common.Constants;
 using SpeedWebAPI.Common.Models;
 using SpeedWebAPI.Infrastructure;
-using SpeedWebAPI.Models;
 using SpeedWebAPI.Models.SpeedLimitPQA;
 using SpeedWebAPI.Services.Base;
 using SpeedWebAPI.ViewModels;
@@ -46,9 +46,10 @@ namespace SpeedWebAPI.Services
 
         Task<object> GetSpeedCurrent(int? limit);
 
-        Task<ImportResponse<List<SpeedLimitPQA>>> ImportFromFileExcel(IFormFile formFile, string routeType, CancellationToken cancellationToken);
+        Task<ImportResponse<List<SpeedLimitPQA>>> ImportFromFileExcel(IFormFile formFile,int providerType, CancellationToken cancellationToken);
 
-        Task<string> GetSpeedFromAPIPQA(List<SpeedLimitPQA> speedLimitPQAs, string url = @"http://103.47.194.15:11580/geocodebulk");
+        Task<string> GetSpeedFromAPIPQA(string url, int providerType);
+        Task<MemoryStream> ExportFromExcel(int providerType);
     }
 
     #endregion
@@ -82,10 +83,9 @@ namespace SpeedWebAPI.Services
                                 x => x.DeleteFlag == 0
                                 && x.IsUpdateSpeed == false )
                                 .Take(limit ?? 100).OrderBy(x => x.STT).ToListAsync();
+
                 if(!listQuery.Any())
                     return Result<object>.Success(lstShow, lstShow.Count(), Message.SUCCESS);
-
-                //listQuery.ForEach(x => lstShow.Add(new SpeedProvider(x)));
 
                 foreach (SpeedLimitPQA itemspeed in listQuery)
                 {
@@ -112,7 +112,63 @@ namespace SpeedWebAPI.Services
             }
         }
 
-        public async Task<ImportResponse<List<SpeedLimitPQA>>> ImportFromFileExcel(IFormFile formFile, string routeType, CancellationToken cancellationToken)
+        public async Task<MemoryStream> ExportFromExcel(int providerType = 2000)
+        {
+            var stream = new MemoryStream();
+            List<SpeedLimitPQA> speedLimitPQAs = await Db.SpeedLimitPQAs.Where(
+                   x => x.DeleteFlag == 0
+                   && x.ProviderType == providerType
+                   && x.IsUpdSpeedPQA).OrderBy(x => x.STT).ToListAsync();
+
+            if (!speedLimitPQAs.Any())
+                return new MemoryStream();
+
+            using (var package = new ExcelPackage(stream))
+            {
+                var workSheet = package.Workbook.Worksheets.Add("Sheet1");
+
+                // simple way
+                workSheet.Cells.LoadFromCollection(speedLimitPQAs, true);
+
+                // mutual
+                workSheet.Row(1).Height = 20;
+                workSheet.Row(1).Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                workSheet.Row(1).Style.Font.Bold = true;
+                workSheet.Cells[1, 1].Value = "STT";
+                workSheet.Cells[1, 2].Value = @"Kinh độ";
+                workSheet.Cells[1, 3].Value = @"Vĩ Độ";
+                workSheet.Cells[1, 4].Value = @"Vận tốc GPS";
+                workSheet.Cells[1, 5].Value = @"Vận tốc geocodebulk";
+                workSheet.Cells[1, 6].Value = @"Địa chỉ";
+
+                int recordIndex = 2;
+                foreach (var item in speedLimitPQAs)
+                {
+                    //workSheet.Cells[recordIndex, 1].Value = (recordIndex - 1).ToString();
+                    workSheet.Cells[recordIndex, 1].Value = item.STT;
+                    workSheet.Cells[recordIndex, 2].Value = item.Lng;
+                    workSheet.Cells[recordIndex, 3].Value = item.Lat;
+                    workSheet.Cells[recordIndex, 4].Value = item.SpeedGPS;
+                    workSheet.Cells[recordIndex, 5].Value = item.SpeedPQA;
+                    workSheet.Cells[recordIndex, 6].Value = item.Address;
+                    recordIndex++;
+                }
+
+                package.Save();
+            }
+            stream.Position = 0;
+
+            //string fileNameEx = @"Tổng hợp";
+            //if (providerType == 2000)
+            //    fileNameEx = @"Hà Tĩnh";
+
+            ////string excelName = $"UserList-{DateTime.Now.ToString("yyyyMMddHHmmssfff")}.xlsx";
+            //string excelName = $"{fileNameEx}-{DateTime.Now.ToString("yyyyMMddHHmmssfff")}.xlsx";
+
+            return stream;
+        }
+
+        public async Task<ImportResponse<List<SpeedLimitPQA>>> ImportFromFileExcel(IFormFile formFile, int providerType, CancellationToken cancellationToken)
         {
             if (formFile == null || formFile.Length <= 0)
             {
@@ -167,7 +223,8 @@ namespace SpeedWebAPI.Services
                                 SpeedGPS = Convert.ToInt32(worksheet.Cells[row, 4].Value.ToString().Trim()),
                                 //SpeedPQA = 0,
                                 Address = worksheet.Cells[row, 5].Value.ToString().Trim(),
-                                RouteType = routeType,
+                                ProviderType = providerType,
+                                Direction = 0,// Chiều xuối
                                 FileName = formFile.FileName,
                                 IsUpdSpeedPQA = false,
 
@@ -199,9 +256,9 @@ namespace SpeedWebAPI.Services
                 if(!data.Any())
                     return "OK";
 
-                // Xóa hết dữ liệu import cũ
-                 Db.RemoveRange(data);
-                 await Db.SaveChangesAsync();
+                 // Xóa hết dữ liệu import cũ
+                 //var reSuls Db.RemoveRange(data);
+                 //await Db.SaveChangesAsync();
 
                 foreach (SpeedLimitPQA item in data)
                 {
@@ -222,12 +279,17 @@ namespace SpeedWebAPI.Services
             }
         }
 
-        public async Task<string> GetSpeedFromAPIPQA(List<SpeedLimitPQA> speedLimitPQAs, string url = "http://103.47.194.15:11580/geocodebulk")
+        public async Task<string> GetSpeedFromAPIPQA(string url = "http://103.47.194.15:11580/geocodebulk", int providerType = 2000)
         {
             try
             {
-                if(!speedLimitPQAs.Any())
-                    return "OK";
+                List<SpeedLimitPQA> speedLimitPQAs = await Db.SpeedLimitPQAs.Where(
+                    x => x.DeleteFlag == 0
+                    && x.ProviderType == providerType
+                    && x.IsUpdSpeedPQA == false).OrderBy(x => x.STT).ToListAsync();
+
+                if (!speedLimitPQAs.Any())
+                    return "OK - No data Update";
 
                 foreach (SpeedLimitPQA item in speedLimitPQAs)
                 {
@@ -242,10 +304,10 @@ namespace SpeedWebAPI.Services
                     item.SpeedPQA = speed;
                     item.UpdateCount++;
                     item.UpdatedDate = DateTime.Now;
-                    item.UpdatedBy = $"Upd numbers {item.UpdateCount?.ToString()}";
+                    item.UpdatedBy = $"Form APIPQA Upd numbers {item.UpdateCount?.ToString()}";
 
                     Db.Entry(item).State = EntityState.Modified;
-
+                    await Db.SaveChangesAsync();
                 }
 
                 return "OK";
@@ -316,11 +378,11 @@ namespace SpeedWebAPI.Services
                 var lstUpd = await Db.SpeedLimitPQAs
                 .Where(x => x.Lat == speedLimit.Lat
                 && x.Lng == speedLimit.Lng
-                //&& x.ProviderType == speedLimit.ProviderType
+                && x.ProviderType == speedLimit.ProviderType
                 && x.DeleteFlag == 0
                 && x.IsUpdateSpeed == true
                 //&& x.SegmentID == speedLimit.SegmentID
-                //&& x.Direction == speedLimit.Direction
+                && x.Direction == speedLimit.Direction
                 && x.PointError == false).ToListAsync();
 
                 if (lstUpd != null)
