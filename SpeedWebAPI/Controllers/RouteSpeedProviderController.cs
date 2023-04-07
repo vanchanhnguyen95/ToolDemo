@@ -6,10 +6,8 @@ using System.Threading.Tasks;
 namespace SpeedWebAPI.Controllers
 {
     [ApiVersion("1")]
-    [ApiController]
-	[Route("api/v{version:apiVersion}/[controller]")]
-	public class RouteSpeedProviderController : ControllerBase
-	{
+	public class RouteSpeedProviderController : BaseController
+    {
 
         private readonly ISpeedLimitService _speedLimitService;
 

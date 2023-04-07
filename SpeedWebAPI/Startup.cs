@@ -61,8 +61,9 @@ namespace SpeedWebAPI
 				x => x.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
 			#region Dependency Injection
-			services.AddScoped<ISpeedLimitService, SpeedLimitService>();
-			services.AddScoped<ISpeedProviderFileService, SpeedProviderFileService>();
+			//services.AddScoped<ISpeedLimitService, SpeedLimitService>();
+			//services.AddScoped<ISpeedProviderFileService, SpeedProviderFileService>();
+			services.RegisterSpeedServices();
 			#endregion
 		}
 

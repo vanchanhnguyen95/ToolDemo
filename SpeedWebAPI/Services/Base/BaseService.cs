@@ -60,5 +60,6 @@ namespace SpeedWebAPI.Services.Base
         {
             Db.Set<TModel>().Remove(obj);
         }
+
     }
 }

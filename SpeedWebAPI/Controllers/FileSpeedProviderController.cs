@@ -8,10 +8,8 @@ using System.Threading.Tasks;
 namespace SpeedWebAPI.Controllers
 {
     [ApiVersion("1")]
-    [ApiController]
-	[Route("api/v{version:apiVersion}/[controller]")]
-	public class FileSpeedProviderController : ControllerBase
-	{
+	public class FileSpeedProviderController : BaseController
+    {
         private readonly ISpeedProviderFileService _speedProviderService;
 
         public FileSpeedProviderController(ISpeedProviderFileService speedProviderService)
