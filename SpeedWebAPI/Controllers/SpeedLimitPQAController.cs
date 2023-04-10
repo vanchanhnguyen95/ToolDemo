@@ -29,12 +29,33 @@ namespace SpeedWebAPI.Controllers
             return await _service.ImportFromFileExcel(formFile, providerType, cancellationToken);
         }
 
+        /// <summary>
+        /// Cập nhật vận tốc từ API SOAP Bình Anh
+        /// </summary>
+        /// <param name="url"></param>
+        /// <param name="providerType"></param>
+        /// <returns></returns>
         [HttpGet]
         [MapToApiVersion("1")]
-        [Route("GetSpeedFromAPIPQA")]
-        public async Task<IActionResult> GetSpeedFromAPIPQA(string url = "http://103.47.194.15:11580/geocodebulk", int providerType = 2000)
+        [Route("GetSpeedFromAPISoapBA")]
+        public async Task<IActionResult> GetSpeedGetSpeedFromAPISoapBAFromBA( int providerType = 2000)
         {
-            var data = await _service.GetSpeedFromAPIPQA(url, providerType);
+            var data = await _service.GetSpeedFromAPISoapBA(providerType);
+            return Ok(data);
+        }
+
+        /// <summary>
+        /// Cập nhật vận tốc từ Geocodebulk
+        /// </summary>
+        /// <param name="url"></param>
+        /// <param name="providerType"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [MapToApiVersion("1")]
+        [Route("GetSpeedFromGeocodebulk")]
+        public async Task<IActionResult> GetSpeedFromGeocodebulk(string url = "http://103.47.194.15:11580/geocodebulk", int providerType = 2000)
+        {
+            var data = await _service.GetSpeedFromGeocodebulk(url, providerType);
             return Ok(data);
         }
 

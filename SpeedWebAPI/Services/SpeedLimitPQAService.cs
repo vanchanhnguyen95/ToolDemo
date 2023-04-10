@@ -6,6 +6,7 @@ using OfficeOpenXml.Style;
 using SpeedWebAPI.Common.Constants;
 using SpeedWebAPI.Common.Models;
 using SpeedWebAPI.Infrastructure;
+using SpeedWebAPI.Models.SpeedLimitBA;
 using SpeedWebAPI.Models.SpeedLimitPQA;
 using SpeedWebAPI.Services.Base;
 using SpeedWebAPI.ViewModels;
@@ -13,10 +14,12 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Xml;
 
 namespace SpeedWebAPI.Services
 {
@@ -48,7 +51,9 @@ namespace SpeedWebAPI.Services
 
         Task<ImportResponse<List<SpeedLimitPQA>>> ImportFromFileExcel(IFormFile formFile,int providerType, CancellationToken cancellationToken);
 
-        Task<string> GetSpeedFromAPIPQA(string url, int providerType);
+        Task<string> GetSpeedFromAPISoapBA(int providerType);
+
+        Task<string> GetSpeedFromGeocodebulk(string url, int providerType);
         Task<MemoryStream> ExportFromExcel(int providerType);
     }
 
@@ -56,6 +61,9 @@ namespace SpeedWebAPI.Services
 
     public class SpeedLimitPQAService : BaseService<SpeedLimitPQA, ApplicationDbContext>, ISpeedLimitPQAService
     {
+        private const string urlGeocodebulk = @"http://103.47.194.15:11580/geocodebulk";
+        private const string urlJAddressByGeoResultBA = @"http://geocode.v1.basrv.vn/geocoding.asmx";
+
         public SpeedLimitPQAService(ApplicationDbContext db) : base(db)
         {
         }
@@ -139,7 +147,8 @@ namespace SpeedWebAPI.Services
                 workSheet.Cells[1, 3].Value = @"Vĩ Độ";
                 workSheet.Cells[1, 4].Value = @"Vận tốc GPS";
                 workSheet.Cells[1, 5].Value = @"Vận tốc geocodebulk";
-                workSheet.Cells[1, 6].Value = @"Địa chỉ";
+                workSheet.Cells[1, 6].Value = @"Vận tốc Bình Anh";
+                workSheet.Cells[1, 7].Value = @"Địa chỉ";
 
                 int recordIndex = 2;
                 foreach (var item in speedLimitPQAs)
@@ -150,7 +159,8 @@ namespace SpeedWebAPI.Services
                     workSheet.Cells[recordIndex, 3].Value = item.Lat;
                     workSheet.Cells[recordIndex, 4].Value = item.SpeedGPS;
                     workSheet.Cells[recordIndex, 5].Value = item.SpeedPQA;
-                    workSheet.Cells[recordIndex, 6].Value = item.Address;
+                    workSheet.Cells[recordIndex, 6].Value = item.SpeedDetect;
+                    workSheet.Cells[recordIndex, 7].Value = item.Address;
                     recordIndex++;
                 }
 
@@ -279,7 +289,7 @@ namespace SpeedWebAPI.Services
             }
         }
 
-        public async Task<string> GetSpeedFromAPIPQA(string url = "http://103.47.194.15:11580/geocodebulk", int providerType = 2000)
+        public async Task<string> GetSpeedFromGeocodebulk(string url = urlGeocodebulk, int providerType = 2000)
         {
             try
             {
@@ -318,9 +328,64 @@ namespace SpeedWebAPI.Services
             }
         }
 
-        private async Task<int> GetSingleSpeedFromAPIPQA(LocationPQA locationPQA, string url = @"http://103.47.194.15:11580/geocodebulk")
+        public async Task<string> GetSpeedFromAPISoapBA(int providerType = 2000)
         {
-            // url gọi lấy tọa độ được cung cấp từ PQA
+            try
+            {
+                List<SpeedLimitPQA> speedLimitPQAs = await Db.SpeedLimitPQAs.Where(
+                    x => x.DeleteFlag == 0
+                    && x.ProviderType == providerType
+                    && x.IsUpdateSpeed == false).OrderBy(x => x.STT).ToListAsync();
+
+                if (!speedLimitPQAs.Any())
+                    return "OK - No data Update";
+
+                foreach (SpeedLimitPQA item in speedLimitPQAs)
+                {
+                    int speed = InvokeServiceGetSpeedLimitFromBA(item.Lat, item.Lng);
+
+                    //item.MinSpeed = speedLimit.MinSpeed;
+                    //item.MaxSpeed = speedLimit.MaxSpeed;
+                    //item.IsUpdateSpeed = false;
+                    //item.PointError = speedLimit.PointError ?? false;
+                    item.IsUpdateSpeed = true;
+                    item.SpeedDetect = speed;
+                    item.UpdateCount++;
+                    item.UpdatedDate = DateTime.Now;
+                    item.UpdatedBy = $"Form APIPQA Upd numbers {item.UpdateCount?.ToString()}";
+
+                    Db.Entry(item).State = EntityState.Modified;
+                    await Db.SaveChangesAsync();
+                }
+
+                return "OK";
+            }
+            catch (Exception ex)
+            {
+                return ex.ToString();
+            }
+        }
+
+        public async Task<IResult<object>> UpdateSpeedLimitPush(SpeedLimitParams speedLimitParams)
+        {
+
+            foreach (SpeedLimitPush item in speedLimitParams.data)
+            {
+                await UpdateSpeedLimitPush(item);
+            }
+
+            return Result<object>.Success(speedLimitParams);
+        }
+
+
+        public Task<IResult<object>> UpdloadSpeedProvider(List<SpeedProviderUpLoadVm> speedProviderUpLoad)
+        {
+            throw new NotImplementedException();
+        }
+
+        private async Task<int> GetSingleSpeedFromAPIPQA(LocationPQA locationPQA, string url = urlGeocodebulk)
+        {
+            // url gọi lấy vận tốc từ tọa độ được cung cấp từ PQA
             //var url = @"http://103.47.194.15:11580/geocodebulk";
 
             GeocodeBulkPush geocodebulkpush = new GeocodeBulkPush();
@@ -353,17 +418,6 @@ namespace SpeedWebAPI.Services
             {
                 return 0;
             }
-        }
-
-        public async Task<IResult<object>> UpdateSpeedLimitPush(SpeedLimitParams speedLimitParams)
-        {
-
-            foreach (SpeedLimitPush item in speedLimitParams.data)
-            {
-                await UpdateSpeedLimitPush(item);
-            }
-
-            return Result<object>.Success(speedLimitParams);
         }
 
         private async Task<IResult<object>> UpdateSpeedLimitPush(SpeedLimitPush speedLimit)
@@ -403,13 +457,83 @@ namespace SpeedWebAPI.Services
             {
                 return Result<object>.Error(ex.ToString());
             }
-
         }
 
-        public Task<IResult<object>> UpdloadSpeedProvider(List<SpeedProviderUpLoadVm> speedProviderUpLoad)
+        private int InvokeServiceGetSpeedLimitFromBA(decimal lat, decimal lng)
         {
-            throw new NotImplementedException();
+            try
+            {
+                HttpWebRequest request = CreateSOAPWebRequestBA();
+                XmlDocument SOAPReqBody = new XmlDocument();
+                SOAPReqBody.LoadXml(@"<?xml version=""1.0"" encoding=""utf-8""?>
+                    <soap:Envelope xmlns:soap=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"">
+                    <soap:Header>
+                        <UTLAuthHeader xmlns=""http://tempuri.org/"">
+                            <Username>bagps</Username>
+                            <Password>map.geocode@ba</Password>
+                        </UTLAuthHeader>
+                    </soap:Header>
+                    <soap:Body>
+                        <JAddressByGeo xmlns=""http://tempuri.org/"">
+                            <requestStr>
+                            {""geo"":[{""lat"":" + lat + @",""lng"":" + lng + @"}],""typ"":3,""lan"":""vn""}
+                            </requestStr>
+                        </JAddressByGeo>
+                    </soap:Body>
+                    </soap:Envelope>");
+
+                using (Stream stream = request.GetRequestStream())
+                {
+                    SOAPReqBody.Save(stream);
+                }
+
+                using (WebResponse Serviceres = request.GetResponse())
+                {
+                    using (StreamReader rd = new StreamReader(Serviceres.GetResponseStream()))
+                    {
+                        var ServiceResult = rd.ReadToEnd();
+                        //Console.WriteLine(ServiceResult);
+
+                        var xmlDocument = new XmlDocument();
+                        xmlDocument.LoadXml(ServiceResult);
+
+                        // Extract information from the XML response
+                        XmlNodeList nodes = xmlDocument.GetElementsByTagName("JAddressByGeoResult");
+                        foreach (XmlNode node in nodes)
+                        {
+                            //Console.WriteLine(node.InnerText);
+                            if (string.IsNullOrEmpty(node.InnerText)) return 0;
+
+                            JAddressByGeoBAResult geoResult = JsonConvert.DeserializeObject<JAddressByGeoBAResult>(node.InnerText);
+
+                            if (geoResult == null) return 0;
+
+                            if (!geoResult.data.Any()) return 0;
+
+                            return geoResult.data[0].maxspeed;
+                        }
+                    }
+                }
+
+                return 0;
+            }
+            catch
+            {
+                return 0;
+            }
+ 
         }
+
+        private HttpWebRequest CreateSOAPWebRequestBA(string requestUriString = @"http://geocode.v1.basrv.vn/geocoding.asmx")
+        {
+            HttpWebRequest Req = (HttpWebRequest)WebRequest.Create(requestUriString);
+            Req.Headers.Add(@"SOAP:Action");
+            Req.ContentType = "text/xml;charset=\"utf-8\"";
+            Req.Accept = "text/xml";
+            Req.Method = "POST";
+            return Req;
+        }
+
 
 
     }
