@@ -366,11 +366,6 @@ namespace SpeedWebAPI.Services
             return Result<object>.Success(speedLimitParams);
         }
 
-        public Task<IResult<object>> UpdloadSpeedProvider(List<SpeedProviderUpLoadVm> speedProviderUpLoad)
-        {
-            throw new NotImplementedException();
-        }
-
         private async Task<IResult<object>> UpdateSpeedLimitPush(SpeedLimitPush speedLimit)
         {
             try
@@ -411,6 +406,11 @@ namespace SpeedWebAPI.Services
 
         }
 
-        
+        public Task<IResult<object>> UpdloadSpeedProvider(List<SpeedProviderUpLoadVm> speedProviderUpLoad)
+        {
+            throw new NotImplementedException();
+        }
+
+
     }
 }
