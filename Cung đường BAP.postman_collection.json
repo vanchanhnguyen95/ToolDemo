@@ -1,0 +1,49 @@
+{
+	"info": {
+		"_postman_id": "9cf1f5af-e84a-4f2b-a28f-1239ea0bf815",
+		"name": "Cung đường BAP",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "6781958"
+	},
+	"item": [
+		{
+			"name": "Lấy DL cung đường",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "text/xml",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<soap:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\r\n  <soap:Header>\r\n    <UTLAuthHeader xmlns=\"http://tempuri.org/\">\r\n      <Username>bagps</Username>\r\n      <Password>map.geocode@ba</Password>\r\n    </UTLAuthHeader>\r\n  </soap:Header>\r\n  <soap:Body>\r\n    <JAddressByGeo xmlns=\"http://tempuri.org/\">\r\n      <requestStr>{\"geo\":[{\"lat\":10.423202,\"lng\":106.175835}],\"typ\":3,\"lan\":\"vn\"}</requestStr>\r\n    </JAddressByGeo>\r\n  </soap:Body>\r\n</soap:Envelope>",
+					"options": {
+						"raw": {
+							"language": "text"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://geocode.v1.basrv.vn/geocoding.asmx",
+					"protocol": "http",
+					"host": [
+						"geocode",
+						"v1",
+						"basrv",
+						"vn"
+					],
+					"path": [
+						"geocoding.asmx"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
