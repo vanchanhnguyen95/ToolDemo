@@ -1,0 +1,167 @@
+
+* Tạo link đến data
+/data/20220901/
+* Tạo link lưu log
+
+Cách 2:
+sudo systemctl daemon-reload
+
+sudo nano /etc/systemd/system/geo.service
+
+sudo systemctl enable geo2.service
+
+sudo systemctl start geo2
+
+sudo systemctl status geo2
+
+sudo systemctl stop geo2
+
+sudo systemctl start geo2
+
+/data/georoot/20220901
+/data/georoot/logs
+
+
+sudo chmod -R 755 *
+
+# /etc/systemd/system
+[Unit]
+Description=BA Map Geo Service
+
+[Service]
+WorkingDirectory=/data/geo/20230619
+ExecStart=/root/dotnet/dotnet BAGeocoding.Api.dll
+Restart=always
+# Restart service after 5 seconds if the dotnet service crashes:
+RestartSec=5
+SyslogIdentifier=map-gateway-service
+User=root
+
+Environment=ASPNETCORE_ENVIRONMENT=Production
+
+[Install]
+WantedBy=multi-user.target
+
+[Unit] 
+
+Description=Geo ASP .NET 7 Web Application 
+
+[Service] 
+
+WorkingDirectory=/data/geo/20230619
+
+ExecStart=/usr/share/dotnet/dotnet /data/geo/20230619/BAGeocoding.Api.dll
+
+Restart=always 
+
+
+RestartSec=10 
+
+SyslogIdentifier=netcore-demo 
+
+User=root
+
+Environment=ASPNETCORE_ENVIRONMENT=Production 
+
+[Install] 
+
+WantedBy=multi-user.target 
+
+##########################################################
+Cách publish kibana
+##########################################################
+
+sudo systemctl daemon-reload
+
+sudo nano /etc/systemd/system/kibanatwo.service
+
+sudo systemctl enable kibanatwo.service
+
+sudo systemctl start kibanatwo
+
+sudo systemctl status kibanatwo
+
+sudo systemctl stop kibanatwo
+
+sudo systemctl start kibanatwo
+
+[Unit]
+Description=Kibana
+After=network.target
+
+[Service]
+ExecStart=/data/kibana-7.3.1-linux-x86_64/bin/kibana  --allow-root
+WorkingDirectory=/data/kibana-7.3.1-linux-x86_64
+User=root
+Group=root
+Restart=always
+RestartSec=5
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target
+
+ ./bin/kibana --allow-root
+
+
+VM133
+IP: 10.0.10.133
+Cổng SSH: 5522
+Tài khoản: root 
+Mật khẩu: x2ChZgHY2@q!!TTzaH!Pkp&X
+
+Tài khoản: kcn
+Mật khẩu: YpTgjBP9AE#Nb5aE49wH2UTJ
+
+chanhnv
+k$Fk2HGagVyDV!$Jw5KYWw8$
+
+
+http://10.0.10.133:5001
+#server.host: "localhost"
+server.host: "0.0.0.0"
+
+sudo ufw reload
+
+sudo ufw allow 9201/tcp
+sudo ufw allow 9301/tcp
+
+sudo ufw status
+GetIndexProvince()
+
+
+sudo systemctl daemon-reload
+
+sudo nano /etc/systemd/system/kibanatwo.service
+
+sudo systemctl enable kibanatwo.service
+
+sudo systemctl start kibanatwo
+
+sudo systemctl status kibanatwo
+
+sudo systemctl stop kibanatwo
+
+sudo systemctl start kibanatwo
+
+
+publish code trên ubuntu:
+> Vào folder chưa project
+> sudo chmod -R 755 *
+> ls -all
+> sudo dotnet BAGeocoding.Api.dll
+
+sudo chmod -R 755 *
+
+sudo systemctl daemon-reload
+
+sudo systemctl stop geothree
+
+sudo systemctl start geothree
+
+sudo systemctl status geothree
+
+Ngày đăng 5-10 short
+Đăng vào các khung giờ 6-7-8am
+12-13-14pm
+7-8-9pm

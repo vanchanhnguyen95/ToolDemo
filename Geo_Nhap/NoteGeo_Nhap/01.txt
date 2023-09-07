@@ -1,0 +1,289 @@
+1 là bạn gõ cụm từ kho nhạc ko bản quyền lên google.
+2. Là bạn dùng bộ lọc để chọn loại giấy phép creative commons.
+
+3. https://tiengdong.com/
+
+
+2DienMT : https://www.youtube.com/@2DienMT
+
+Lemon coder: https://www.youtube.com/@lemoncoder/videos
+
+
+https: //www.youtube.com/playlist?list=PLxfbGQRTJlMFtt0G2FcwjoPQFO7KZi8n0  
+
+https://www.youtube.com/playlist?list=PLZodFbrRp5TmnS9-WsXRLVB3B0dxZ0kxv
+
+https: //www.youtube.com/playlist?list=PLxfbGQRTJlMFwrj8-Bjdy6UhKisRz857g
+
+https: //www.youtube.com/playlist?list=PLxfbGQRTJlMHxkE_kHoir0F8rMIEvZJmU
+https: //www.youtube.com/watch?v=-XAJf2d-idU
+
+https: //www.youtube.com/playlist?list=PLxfbGQRTJlMHxkE_kHoir0F8rMIEvZJmU
+
+Ngõ 236/45 đại từ, HÀ NỘI
+
+Ngõ 236/45, đại từ, HÀ NỘI
+
+Phần 2:
+Có các hàm Trim trên chuỗi này dùng nhiều trong validate nè
+
+Phần 3:
+Có các hàm viết sẵn trên chuỗi này nhanh ghê, cảm ơn ad nha
+
+https://youtube.com/@duynuongdl
+
+Ngày 10h-14h
+Đêm 17h-20h
+
+#Lậptrình
+#Csharp
+#Csharpprogramming
+#Csharpdeveloper
+#CodingCsharp
+#LậptrìnhCsharp
+#Csharpcoder
+#Csharpcommunity
+#DotNetprogramming
+#Csharplove
+#Lậptrìnhmềmcơbản
+#Csharpbeginner
+#Csharpcode
+#Csharpgeek
+#Csharpdev
+#Lậptrìnhhướngđối tượng
+#Csharpwebdevelopment
+#Csharpappdevelopment
+#Csharpsoftware
+#LậptrìnhCsharpnângcao
+
+#LậptrìnhCSharp
+#CSharpDotNet
+#LậptrìnhHướngđốiTượng
+#CSharpProgramming
+#CSharpCoder
+#CSharpDeveloper
+#LậptrìnhỨngdụng
+#CSharpFramework
+#LậptrìnhWebCSharp
+#CSharpSoftware
+#LậptrìnhMạng
+#CSharpProjects
+#LậptrìnhGiaođiện
+#CSharpCoding
+#LậptrìnhHệđiềuHành
+#CSharpCommunity
+#LậptrìnhMobile
+#CSharpLanguage
+#LậptrìnhGame
+#CSharpTutorials
+Chuỗi trong C# phần 4
+Chuỗi trong C# phần 3
+Chuỗi trong C# phần 2
+Chuỗi trong C# phần 1
+
+lemon coder,csharpbasics,lemon,csharpprogramming,csharptutorial,csharpproject,csharpdevelopers,csharpdotnet,c#coban,laptrinhc#,laptrinh,backend,net6,c# cho người mới bắt đầu,thành thạo c#,Net6,dotet 6,c# 2023,C# cơ bản 2023,C# cơ bản,String,chuoitrongc#phan3,chuoi trong c#,String in c#,String in C# With Examples,#12 Chuỗi trong C# phần 3 (String in C# With Examples P3) | Lemon coder,Chuỗi trong C# phần 3,String in C# With Examples P3,lemon codder,lemoncoder , StringinC#
+
+
+có ví dụ về hàm IndexOf hay dùng nè
+
+
+1. Trường hợp ko nhập vào tỉnh
+=> Mặc định hà nội
+2. Trường hợp nhập vào tỉnh
+=> Tìm tỉnh
+
+Có những cách nhập sau:
+- Nhập (Tên đường): Chu Văn An
+- Nhập (Tên đường, Tên Tỉnh): Hoàng Thị Loan, Đà Nẵng
+- Nhập (Số nhà, Tên Đường, Tên Tỉnh): 120, Trần Phú, Quảng Ninh
+- Nhập (Tên đường, Tên Quận/huyện, Tên Tỉnh): Lê Thanh Nghị, Cẩm Phả, Quảng Ninh
+- Nhập (Số nhà, Tên đường, tên Quận/huyện, Tên Tỉnh): 79, Tô Hiệu, Lê Chân, Hải Phòng
+
+1 bảng lưu Tỉnh
+
+1 bảng Lưu Huyện thuộc Tỉnh nào
+
+Tìm kiếm Tỉnh
+
+Tìm kiếm huyện thuộc Tỉnh
+
+Tìm kiếm đường, chí lấy đường thuộc tỉnh nào thôi
+
+phần mềm vidIQ
+
+cứ cách ngày là c
+
+// Phân tích ra cụm từ đầu vào sẽ lấy ra được bao nhiêu từ
+
+// Lấy ra số từ cần dùng đề đi tìm kiếm tên Tỉnh
+
+// Chuẩn hóa lại cụm từ đầu vào (sau khi có tên tỉnh)
+	- Nếu tìm được Tên tỉnh:
+	 + remove tên tỉnh có trong từ khóa tìm kiếm ban đầu
+
+##################################
+ưu tiền tìm : số nhà, tên đường, tên tỉnh trước
+##################################
+
+1. Nhập (Tên đường): Chu Văn An
+Cũ:
+	-		keySearch	{BAGeocoding.Entity.MapObj.BAGSearchKey}	BAGeocoding.Entity.MapObj.BAGSearchKey
+		Building	0	short
+		District	""	string
+		IsSpecial	true	bool
+		IsValid	true	bool
+		Original	"chu văn an"	string
+		Province	"ha noi"	string
+		Road	"chu van an"	string
+		
+Mới: Ko tìm được tỉnh thành nào thì cho mặc định:
+		Province	"ha noi"	string
+		Road	"chu van an"	string
+
+
+2. Nhập (Tên đường, Tên Tỉnh): Hoàng Thị Loan, Đà Nẵng / Hoàng Thị Loan Đà Nẵng
+Cũ:
+	Building	0	short
+	District	""	string
+	IsSpecial	true	bool
+	IsValid	true	bool
+	Original	"hoàng thị loan, đà nẵng"	string
+	Province	"da nang"	string
+	Road	"hoang thi loan"	string
+
+Mới: Tìm được tỉnh, ko tìm được huyện/ quận/ tp, lấy tên đường thì bỏ tỉnh ra
+	Province	"da nang"	string
+	Road	"hoang thi loan"	string
+	
+	 "Road": "hoang thi loan",
+        "District": "",
+        "Province": "da nang",
+        "Original": "hoàng thị loan, đà nẵng"
+
+
+3. Nhập (Số nhà, Tên Đường, Tên Tỉnh): 120, Trần Phú, Quảng Ninh
+Cũ:
+-		keySearch	{BAGeocoding.Entity.MapObj.BAGSearchKey}	BAGeocoding.Entity.MapObj.BAGSearchKey
+		Building	120	short
+		District	""	string
+		IsSpecial	true	bool
+		IsValid	true	bool
+		Original	"120, trần phú, quảng ninh"	string
+		Province	"quang ninh"	string
+		Road	"tran phu"	string
+
+
+Mới: Tìm được tỉnh, ko tìm được huyện/ quận/ tp, tìm được số nhà
+		Building	120	short
+		Province	"quang ninh"	string
+		Road	"tran phu"	string
+
+ "IsValid": true,
+        "IsSpecial": true,
+        "Building": 120,
+        "Road": "tran phu",
+        "District": "",
+        "Province": "quang ninh",
+        "Original": "120, trần phú, quảng ninh"
+
+
+4. Nhập (Tên đường, Tên Quận/huyện, Tên Tỉnh): Lê Thanh Nghị, Cẩm Phả, Quảng Ninh
+Cũ:
+-		keySearch	{BAGeocoding.Entity.MapObj.BAGSearchKey}	BAGeocoding.Entity.MapObj.BAGSearchKey
+		Building	0	short
+		District	"cam pha"	string
+		IsSpecial	true	bool
+		IsValid	true	bool
+		Original	"lê thanh nghị, cẩm phả, quảng ninh"	string
+		Province	"quang ninh"	string
+		Road	"le thanh nghi"	string
+
+
+Mới:
+
+"IsValid": true,
+        "IsSpecial": true,
+        "Building": 0,
+        "Road": "le thanh nghi",
+        "District": "cam pha",
+        "Province": "quang ninh",
+        "Original": "lê thanh nghị, cẩm phả, quảng ninh"
+
+5. Nhập (Số nhà, Tên đường, tên Quận/huyện, Tên Tỉnh): 79, Tô Hiệu, Lê Chân, Hải Phòng
+Cũ:
+-		keySearch	{BAGeocoding.Entity.MapObj.BAGSearchKey}	BAGeocoding.Entity.MapObj.BAGSearchKey
+		Building	79	short
+		District	"le chan"	string
+		IsSpecial	true	bool
+		IsValid	true	bool
+		Original	"79, tô hiệu, lê chân, hải phòng"	string
+		Province	"hai phong"	string
+		Road	"to hieu"	string
+
+Mới:
+"IsValid": true,
+        "IsSpecial": true,
+        "Building": 79,
+        "Road": "to hieu",
+        "District": "le chan",
+        "Province": "hai phong",
+        "Original": "79, tô hiệu, lê chân, hải phòng"
+		
+Gửi Chanh,
+1. Phần tìm địa chỉ bản đồ (AddressToGeo).
+Em nghiên cứu bổ sung giúp anh case không cần nhập dấu phẩy với nhé.
+=> Để dùng dc cho người dùng khi tìm kiếm địa chỉ trên App.
+Như hiện tại cứ phải nhập đúng cấu trúc địa chỉ thì mới tìm được thì hơi bất tiện
+
+		
+Gửi @⁨Chanh Nguyễn⁩ , a Tú Anh :
+2. Phần AutoComplete hiện tại khi người dùng tìm sẽ ra nhiều kết quả không được sắp xếp ưu tiên vị trí gần mình
+=> Mong muốn : 
+ - có sắp xếp kết quả theo vị trí, để thuận tiện cho người dùng.
+ - có nhận diện được tìm theo POI hay Road.
+ - gợi ý theo cụm từ liền nhau.
+Anh sẽ gửi 1 vài VD về kết quả tìm kiếm		
+		
+		
+mình có tạo page để dễ chia sẻ việc học, bạn giúp mình like, theo dõi, đánh giá kênh ủng hộ mình nhé, cảm ơn b
+
+https://www.facebook.com/people/Lemon-Coder/100093346697587/
+
+bạn tìm từ:
+
+c# cơ bản 2023
+
+rồi vào video có hình như mình gửi dưới đây
+xem 10p ko tua, xem xong like, đăng ký kênh nha
+
+
+Nợ:
+1.Han Le
+https://www.youtube.com/watch?v=69u_1IUhtX4
+2. Thanh Toàn
+https://www.youtube.com/watch?v=Or-XzgYXXSg
+
+Gấu TV [S1] | Shin Cậu Bé Bút Chì | Tập 1 | Cả Nhà Mình Chuyển Tới Nhà Mới | Phim Hoạt Hình Thuyết Minh
+
+Em có cập nhật bổ sung case không cần nhập dấu phẩy, từ những case hiện tại chuyển qua thì có những case này nhé anh:
+
+1. Nhập (Tên đường)
+Chu Văn An
+
+2. Nhập (Tên đường, Tên Tỉnh)
+Hoàng Thị Loan, Đà Nẵng = Hoàng Thị Loan Đà Nẵng
+
+3. Nhập (Số nhà, Tên Đường, Tên Tỉnh)
+120, trần phú, quảng ninh = 120 trần phú quảng ninh
+
+4. Nhập (Tên đường, Tên Quận/huyện, Tên Tỉnh)
+lê thanh nghị, cẩm phả, quảng ninh = lê thanh nghị cẩm phả quảng ninh
+
+5. Nhập (Số nhà, Tên đường, tên Quận/huyện, Tên Tỉnh)
+79, tô hiệu, lê chân, hải phòng
+
+6. Nhập (Số nhà tên đường)
+106 Hoàng Quốc Việt
+
+cái autocomplete anh đang test dịch vụ em đang dựng hay dịch vụ cũ ạ.
+ Dịch vụ em đang dựng thì đang xây dựng dữ liệu là Road và kết quả là tọa  độ của

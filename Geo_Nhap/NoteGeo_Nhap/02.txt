@@ -1,0 +1,52 @@
+ok, để anh và TK thử nhé.
+Còn case Ngõ Ngách nữa em :
+- Ngõ (Bắc) = Kiệt (Trung) = Hẻm (Nam).
+=> case này làm sau, vì anh đã có hướng khắc phục tạm. Em xem giúp anh cái Autocomplete trước với nhé
+
+anh thấy đoạn trả ra dữ liệu ngõ ngách thường sẽ ít dùng trong taxi mà kết quả trả về của mình lại rất nhiều (80% luôn ấy).
+=> em xem tối ưu thêm nhé, nếu KH họ ko có gõ Ngõ thì đừng show ra em ạ
+
+
+I. Xử lý dữ liệu trước khi bulk vào elastic search
+- Thêm trường phân biệt đường nào là: đường thông thường, đường ngõ, ngách
+ 0: thông thường, 1: ngõ, 2: ngách
+II. Xử lý khi tìm kiếm không nhập ngõ, ngách
+Nếu ko nhập ngõ, ngách, ko cho hiện gợi ý ngõ ngách 
+
+08 dang thoát tạm ta
+
+
+Gửi Chanh,
+1. Phần tìm địa chỉ bản đồ (AddressToGeo).
+Em nghiên cứu bổ sung giúp anh case không cần nhập dấu phẩy với nhé.
+=> Để dùng dc cho người dùng khi tìm kiếm địa chỉ trên App.
+Như hiện tại cứ phải nhập đúng cấu trúc địa chỉ thì mới tìm được thì hơi bất tiện
+
+Gửi @⁨Chanh Nguyễn⁩ , a Tú Anh :
+2. Phần AutoComplete hiện tại khi người dùng tìm sẽ ra nhiều kết quả không được sắp xếp ưu tiên vị trí gần mình
+=> Mong muốn : 
+ - có sắp xếp kết quả theo vị trí, để thuận tiện cho người dùng.
+ - có nhận diện được tìm theo POI hay Road.
+ - gợi ý theo cụm từ liền nhau.
+Anh sẽ gửi 1 vài VD về kết quả tìm kiếm
+
+
+Anh Tú Anh ơi, hiện tại thì dữ liệu anh gửi em đang xây dựng cho phần AutoComplete
+ đang chỉ có xây dựng cho phần Road,dữ liệu này đang khác so với phần AutoComplete
+ ở phần STaxi đang dùng ạ, anh gửi em xin thông tin dữ liệu này nhé
+
+1. Dữ liệu phần AutoComplete STaxi đang dùng so với dữ liệu em đang xây dựng
+ - Dữ liệu 2 phần đang khác nhau
+ - Dữ liệu của AutoComplete STaxi có trả về thêm các trường: 
+ 
+ kindname là từ bảng CTL.Kind
+ shapeid là phân biệt đường và điểm
+ searchstr là service tự build khi phân tích từ khoá đầu vào + kết quả đầu ra
+ 
+ shapeid = 1 => Điểm
+ shapeid = 2 => đường
+ 
+ ko em, nó là quy chuẩn bản đồ
+ 1 point, 2 polyline, 3 polygon
+ 
+ 

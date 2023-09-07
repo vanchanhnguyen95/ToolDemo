@@ -1,0 +1,173 @@
+Xây dựng lại autocomplete
+
+1. Xây từ nguồn
+- Từ bảng DTS.RoadName, tìm được ra polyline: polyline-đường- shapeid=2
+- Từ bảng DTS.PointOfInterest
+- Tách ra từng tỉnh
+- Tách ra phân biệt điểm, đường
+- Bên trong từng điểm, đường Tách ra phân biệt: ngõ, ngách, hẻm
+- Nếu không nhập ngõ ngách thì không cho tìm kiếm dạng ngõ ngách
+
+{
+	"address": "Hồ Sỹ Tân, Nghệ An",
+	"coords": [
+		{
+			"lat": 18.65348168,
+			"lng": 105.70253097
+		}
+	],
+	"kindname": "Đường",
+	"name": "Hồ Sỹ Tân",
+	"searchstr": null,
+	"shapeid": 2
+	},
+
+2. Bảng DTS.RoadName
+{
+	"address": "RoadName + Tên tỉnh",
+	"coords": [
+		{
+			"lat": 18.65348168,
+			"lng": 105.70253097
+		}
+	],
+	"kindname": "",
+	"name": "RoadName",
+	"searchstr": null,
+	"shapeid": 2
+	},
+	
+3. Bảng [DTS.PointOfInterest]
+{
+	"address": "Info",
+	"coords": [
+		{
+			"lat": 18.65348168,
+			"lng": 105.70253097
+		}
+	],
+	"kindname": "",
+	"name": "Name",
+	"searchstr": null,
+	"shapeid": 1
+	},
+
+4. Tách ra, bulk Async theo từng tỉnh một để dễ kiểm soát luôn
+67694
+
+VM133
+IP: 10.0.10.133
+Cổng SSH: 5522
+Tài khoản: root 
+Mật khẩu: x2ChZgHY2@q!!TTzaH!Pkp&X
+
+Tài khoản: kcn
+Mật khẩu: YpTgjBP9AE#Nb5aE49wH2UTJ
+
+chanhnv
+k$Fk2HGagVyDV!$Jw5KYWw8$
+
+Gửi anh Tú Anh
+
+Em có xây dựng lại cho phần autocomplete cho Staxi dựa trên dữ liệu 2 bảng 
+DTS.RoadName và  DTS.PointOfInterest như sau ạ:
+
+1. Xây dựng api autocomplete:
+- Thông tin api đang xây dựng để test:
+http://10.0.10.133:5001/api/v1/RoadName/Search?lat=0&lng=0&distance=300km&size=5&keyword=hàng đường
+- Đang đánh index theo khu vực từng tỉnh ạ, đang xây dựng demo cho khu vực Hà Nội ạ
+- Để sử dụng cho từng tỉnh thì cần nhập thêm vào tọa độ (lat, long) và khoảng cách 
+
+2. Trường dữ liệu dùng để tìm kiếm phần autocomplete
+- Bảng DTS.RoadName:  trường [RoadName]
+- Bảng DTS.PointOfInterest:  trường [Name]
+
+-> Service cũ đang xây dựng tương tự như này anh nhỉ?
+ Em có tìm từ khóa "38 Hàng đường" thì thấy dữ liệu chưa có ạ.
+Anh cho em thêm thông tin, em tham khảo ạ.
+ 
+3. Dữ liệu hiển thị thông tin chi tiết 
+- Đang thiếu phần [kindname]. Nhờ anh gửi thông tin Database bảng CTL.Kind
+để em cập nhật ạ. Trường hợp Đối tượng là đường (ở bảng RoadName) thì "kindname"
+để trống anh nhỉ?
+
+4. Nhờ anh cung cấp key để em test api đang dùng ở Staxi, ở khu vực Hà Nội ạ
+- Thông tin 2 api em đang hỏi anh Lực thì đang của Staxi, tốn phí nên ko test đc ạ:
+http://maps.geocode.laocai.bagroup.vn:5600/Search
+http://maps.geocode.laocai.bagroup.vn:5600/Add2Geo
+
+
+* Nếu chọn 2: chỉ tìm phạm vi đường
+- Nếu nhập tọa độ => phân chia ra từng tỉnh
+- Nếu không nhập => cho tìm toàn bộ
+* Nếu chọn 1: chỉ tìm phạm vi điểm
+- Nếu nhập tọa độ => phân chia ra từng tỉnh
+- Nếu không nhập => cho tìm toàn bộ
+
+* Nếu không chọn:
+Tìm cả đường, cả điểm
+
+$"{_indexName}-{shapeid}-{provinceID}"
+
+- Index theo đường phân chia ra từng tỉnh: nhập vào (lat,lng)
+- Index theo đường cho toàn bộ việt nam, chỉ đường
+
+- Index theo điểm phân chia ra từng tỉnh:  nhập vào (lat,lng)
+- Index theo điểm cho toàn bộ việt nam, chỉ điểm
+
+- Index toàn bộ cả nước việt nam cả điểm, cả đường
+- Index theo cho từng tỉnh có cả điểm, đường
+
+SELECT	DRN.*, PRV.VName AS [Address]
+	FROM	[DTS.RoadName] DRN
+			INNER JOIN [CTL.Province] PRV
+			ON	DRN.ProvinceID = PRV.ProvinceIDbun
+
+
+			
+Em có cập nhật phần autocomplete đang xây dựng
+
+1. Xây dựng api autocomplete:
+- Thông tin api đang xây dựng để test:
+http://10.0.10.133:5001/api/v1/RoadName/Search?lat=21.03528964&lng=105.84997545&distance=300km&size=10&keyword=giải phóng hà nội&shapeid=2
+- Đang đánh index theo khu vực từng tỉnh, index cho điểm riêng, đường riêng, đang xây dựng demo cho khu vực Hà Nội ạ
+- Để tìm kiếm cho từng tỉnh thì cần nhập thêm vào tọa độ (lat, long) và khoảng cách.
+ có sắp xếp theo khu vực gần nhất từ tọa độ nhập vào
+- Để tìm kiếm cho điểm riêng, đường riêng thì có thể nhập thêm shapeid (1: điểm, 2: đường)
+
+2. Trường dữ liệu dùng để tìm kiếm phần autocomplete
+- Bảng DTS.RoadName:  trường [RoadName], trường [NameExt] phần mở rộng , tên tỉnh
+- Bảng DTS.PointOfInterest:  trường [Name], tên tỉnh
+
+3. Dữ liệu hiển thị thông tin chi tiết 
+- Đang xây dựng hiển thị tương tự dựa trên api Staxi anh Lực gửi tham khảo:
+http://maps.geocode.laocai.bagroup.vn:5600/Search
+http://maps.geocode.laocai.bagroup.vn:5600/Add2Geo
+
+- Đang thiếu phần [kindname]. Nhờ anh gửi thông tin Database bảng CTL.Kind
+để em cập nhật ạ. Trường hợp Đối tượng là đường (ở bảng RoadName) thì "kindname"
+để trống anh nhỉ?
+
+4. Thông tin service Staxi đã xây dựng
+* Anh cho em hỏi phần autocomplete của Staxi đã xây dựng thì phần text tìm kiếm đang xây dựng như nào ạ?
+Có giống như em đang xây dựng như này không anh?
+- Bảng DTS.RoadName:  trường [RoadName], trường [NameExt] phần mở rộng , tên tỉnh
+- Bảng DTS.PointOfInterest:  trường [Name], tên tỉnh
+
+- Em có tìm từ khóa "38 Hàng đường" thì thấy dữ liệu chưa có ạ.
+Anh cho em thêm thông tin, em tham khảo ạ.
+
+5. Nhờ anh cung cấp key để em test api đang dùng ở Staxi, ở khu vực Hà Nội ạ
+- Thông tin 2 api em đang hỏi anh Lực thì đang của Staxi, tốn phí nên ko test đc ạ:
+http://maps.geocode.laocai.bagroup.vn:5600/Search
+http://maps.geocode.laocai.bagroup.vn:5600/Add2Geo
+
+* Lệnh Xóa db
+USE master;
+GO
+
+ALTER DATABASE zap SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+GO
+DROP DATABASE zap;
+GO
+

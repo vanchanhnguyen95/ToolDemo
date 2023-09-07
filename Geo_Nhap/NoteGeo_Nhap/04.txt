@@ -1,0 +1,87 @@
+Gửi anh @⁨Tú Anh, Phạm⁩  Em có cập nhật phần autocomplete đang xây dựng
+
+1. Xây dựng api autocomplete:
+- Thông tin api đang xây dựng để test:
+http://10.0.10.133:5001/api/v1/RoadName/Search?lat=20.99769065&lng=105.84135609&distance=300km&size=10&keyword=38 hàng đường hà nội&shapeid=2
+- Đang đánh index theo khu vực từng tỉnh, index cho điểm riêng, đường riêng.
+- Để tìm kiếm cho điểm riêng, đường riêng thì có thể nhập thêm shapeid (1: điểm, 2: đường)
+
+2. Dữ liệu hiển thị thông tin chi tiết 
+- Đang xây dựng hiển thị tương tự dựa trên api Staxi.
+- Đã cập nhật thông tin phần [kindname].
+
+3. Em đang xây dựng demo cho khu vực Hà Nội ạ.
+gửi anh Phú Thông tin ạ
+
+
+ Thông tin service Staxi đã xây dựng
+* Anh cho em hỏi phần autocomplete của Staxi đã xây dựng thì phần text tìm kiếm đang xây dựng như nào ạ?
+Có giống như em đang xây dựng như này không anh?
+- Bảng DTS.RoadName:  trường [RoadName], trường [NameExt] phần mở rộng , tên tỉnh
+- Bảng DTS.PointOfInterest:  trường [Name], tên tỉnh
+
+- Em có tìm từ khóa "38 Hàng đường" thì thấy dữ liệu chưa có ạ.
+Anh cho em thêm thông tin, em tham khảo ạ.
+
+
+- Để tìm kiếm cho từng tỉnh thì cần nhập thêm vào tọa độ (lat, long) và khoảng cách.
+ có sắp xếp theo khu vực gần nhất từ tọa độ nhập vào
+ 
+ Gửi anh 
+ Em có cập nhật thông tin api autocomplete như sau ạ:
+ 
+1. Api http://10.0.10.133:5001/api/v1/Geocode/Search
+- Tương tự Api của Staxi là: http://maps.geocode.laocai.bagroup.vn:5600/Search
+- Có thêm params shapeid để tìm kiếm thông tin chỉ đường hoặc điểm
+
+2. Api http://10.0.10.133:5001/api/v1/Geocode/Add2Geo
+- Api lấy lại địa chỉ khi có searchstr ở Api (http://10.0.10.133:5001/api/v1/Geocode/Search)
+- Tương tự Api của Staxi là: http://maps.geocode.laocai.bagroup.vn:5600/Add2Geo
+
+3. Dữ liệu thực hiện tìm kiếm đã cập nhật cho cả nước
+
+http://10.0.10.133:5001/api/v1/Geocode/Search
+
+http://10.0.10.133:5001/api/v1/Geocode/Add2Geo
+
+
+http://10.0.10.133:5001/api/v1/Geocode/Search
+
+http://10.0.10.133:5001/api/v1/Geocode/Add2Geo
+2.2.	Lấy lại thông tin địa chỉ khi có searchstr
+{
+    "errorcode": "0",
+    "state": true,
+    "data": [
+        {
+            "address": "Hàng Đường, TP. Hà Nội",
+            "coords": [
+                {
+                    "lat": 21.03528964,
+                    "lng": 105.84997545
+                }
+            ],
+            "kindname": "Đường",
+            "name": "38, Hàng Đường",
+            "searchstr": "38, Hàng Đường, TP. Hà Nội",
+            "shapeid": 2
+        }
+    ]
+}
+
+http://geocodinggateway.bagroup.vn:8080/api/v1/Geocode/Search?apiKey=BA.2AbzrAVnBKnONdrsef2r6ftd8zfaw
+
+http://geocodinggateway.bagroup.vn:8080
+http://geocodinggateway.bagroup.vn:8080/api/v1/Geocode/Add2Geo?apiKey=BA.2AbzrAVnBKnONdrsef2r6ftd8zfaw
+{
+    "size": 5,
+    "keys": "38, hàng đường, hà nội"
+}
+
+{
+    "keys": "38, Hàng Đường, TP. Hà Nội"
+}
+
+10.0.10.133:5001
+
+S
