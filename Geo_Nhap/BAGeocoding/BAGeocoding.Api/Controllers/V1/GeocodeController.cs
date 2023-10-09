@@ -42,22 +42,6 @@ namespace BAGeocoding.Api.Controllers.V1
             return await _regionService.GeoByAddressAsync(body?.address, "vn");
         }
 
-        //[HttpPost]
-        //[MapToApiVersion("1.0")]
-        //[Route("Add2Geo")]
-        //public async Task<IActionResult> Add2Geo([FromBody] GeoByAddressVm? body)
-        //{
-        //    return Ok(await _regionService.Add2Geo(body?.address, "vn"));
-        //}
-
-        //[HttpPost]
-        //[MapToApiVersion("1.0")]
-        //[Route("Search2")]
-        //public async Task<IActionResult> Search2([FromBody] AutoSugReq body)
-        //{
-        //    return Ok(await _roadElasticService.Search3(body.lat??0, body.lng??0, body.distance??"300km", body?.size??5, body.keys, body.shapeid));
-        //}
-
         [HttpPost]
         [MapToApiVersion("1.0")]
         [Route("Search")]
